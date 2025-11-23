@@ -1,0 +1,66 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --color-red: #b60a0a;
+  --color-yellow: #efdb00;
+  --color-cream: #e1d5c5;
+
+  --color-primary: #38251d;
+  --color-primary-40: #5a3c2d;
+  --color-primary-20: #ffeddf;
+
+  --color-bg-main: #f4f4f4;
+  --color-bg-soft: #f7f3ed;
+  --color-bg-card: #f4f4f4;
+
+  --color-border: #cbb8a3;
+  --color-gray-200: #b3b3b3;
+  --color-gray-100: #e0e0e0;
+
+  --color-text-strong: #1a120d;
+  --color-text-body: #38251d;
+  --color-text-disabled: #6f6258;
+  --color-text-white: #d9d9d9;
+
+  --shadow-soft: 0px 4px 20px rgba(0, 0, 0, 0.12);
+
+  --radius-xl2: 1.25rem;
+
+  /* FONT */
+  --font-sans: "Poppins", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+}
+
+body {
+  background-color: var(--color-bg-main);
+  color: var(--color-text-body);
+  font-family: var(--font-sans);
+
+  margin: 0 auto;
+  max-width: 1280px; 
+}
+
+@media (min-width: 640px) {
+  body {
+    max-width: 680px;
+  }
+}
+
+@media (min-width: 768px) {
+  body {
+    max-width: 800px;
+  }
+}
+
+@media (min-width: 1024px) {
+  body {
+    max-width: 1040px;
+  }
+}
+
+@media (min-width: 1280px) {
+  body {
+    max-width: 1280px; 
+  }
+}
