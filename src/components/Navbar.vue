@@ -19,7 +19,7 @@ const isActive = (name) => activeRouteName.value === name;
 
 <template>
   <header class="sticky top-0 z-30 bg-bg-main">
-    <div class="mx-auto flex items-center px-6 py-4 md:py-6">
+    <div class="mx-auto flex items-center py-4 md:py-6">
       <RouterLink to="/" class="flex items-center gap-2">
         <img src="/logo.webp" alt="logo" class="w-32" />
       </RouterLink>
