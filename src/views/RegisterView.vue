@@ -1,7 +1,11 @@
 <script setup>
 import { ref } from "vue";
+import { register } from "../services/auth";
 import BaseButton from "../components/BaseButton.vue";
 import InputField from "../components/InputField.vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const form = ref({
   username: "",
@@ -9,6 +13,34 @@ const form = ref({
   password: "",
   passwordConfirmation: "",
 });
+
+const loading = ref(false);
+const errorMessage = ref("");
+
+const handleRegister = async () => {
+  loading.value = true;
+  errorMessage.value = "";
+
+  try {
+    const res = await register({
+      name: form.value.username,
+      email: form.value.email,
+      password: form.value.password,
+      password_confirmation: form.value.passwordConfirmation,
+    });
+
+    const token = res.data.data.token;
+    localStorage.setItem("token", token);
+
+    // alert("Berhasil daftar!");
+
+    router.push({ name: "home" });
+  } catch (err) {
+    errorMessage.value = err.response?.data?.message || "Register gagal.";
+  } finally {
+    loading.value = false;
+  }
+};
 </script>
 
 <template>
@@ -22,12 +54,10 @@ const form = ref({
           alt="Kopiew illustration"
           class="pointer-events-none absolute top-1/2 left-1/2 w-3/4 -translate-x-1/2 -translate-y-1/2 object-cover"
         />
-
         <div class="relative flex h-full flex-col justify-between px-8 py-6">
           <div>
             <img src="/white-logo.webp" alt="Kopiew Logo" class="h-10 w-auto" />
           </div>
-
           <div class="mt-8">
             <p class="mb-2 text-[11px] font-medium tracking-wide">
               dibuat untuk kaum skena.
@@ -55,7 +85,7 @@ const form = ref({
           </p>
         </div>
 
-        <form class="space-y-4 text-sm">
+        <form class="space-y-4 text-sm" @submit.prevent="handleRegister">
           <InputField
             label="Username."
             placeholder="masukkan nama.."
@@ -85,8 +115,21 @@ const form = ref({
             icon="eye-off"
           />
 
-          <BaseButton variant="primary" full>Daftar</BaseButton>
+          <BaseButton :disabled="loading" variant="primary" full>
+            <span v-if="!loading">Daftar</span>
+            <span v-else>Memproses...</span>
+          </BaseButton>
         </form>
+
+        <p v-if="errorMessage" class="mt-2 text-center text-xs text-red-500">
+          {{ errorMessage }}
+        </p>
+        <p
+          v-if="successMessage"
+          class="mt-1 text-center text-xs text-emerald-600"
+        >
+          {{ successMessage }}
+        </p>
 
         <p class="mt-2 text-center text-xs text-text-disabled">
           Sudah punya akun?
