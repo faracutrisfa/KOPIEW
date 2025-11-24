@@ -1,40 +1,103 @@
-<template>
-  <section class="min-h-[60vh] flex items-center justify-center px-4 py-12">
-    <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-soft">
-      <h1 class="mb-4 text-xl font-bold text-kopi-600">Daftar</h1>
-      <p class="mb-6 text-xs text-neutral-600">
-        Buat akun untuk mulai eksplor kopi dan menyimpan favoritmu.
-      </p>
+<script setup>
+import { ref } from "vue";
+import BaseButton from "../components/BaseButton.vue";
+import InputField from "../components/InputField.vue";
 
-      <form class="space-y-4 text-sm">
-        <div>
-          <label class="mb-1 block text-xs font-medium">Nama</label>
-          <input
-            type="text"
-            class="w-full rounded-xl border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-kopi-500"
-          />
+const form = ref({
+  username: "",
+  email: "",
+  password: "",
+  passwordConfirmation: "",
+});
+</script>
+
+<template>
+  <section class="grid min-h-screen grid-cols-1 bg-bg-main lg:grid-cols-2">
+    <div class="hidden items-center justify-center p-6 lg:flex">
+      <div
+        class="relative flex h-full w-full max-w-xl flex-col overflow-hidden rounded-3xl bg-primary text-white"
+      >
+        <img
+          src="/cup-bg.webp"
+          alt="Kopiew illustration"
+          class="pointer-events-none absolute top-1/2 left-1/2 w-3/4 -translate-x-1/2 -translate-y-1/2 object-cover"
+        />
+
+        <div class="relative flex h-full flex-col justify-between px-8 py-6">
+          <div>
+            <img src="/white-logo.webp" alt="Kopiew Logo" class="h-10 w-auto" />
+          </div>
+
+          <div class="mt-8">
+            <p class="mb-2 text-[11px] font-medium tracking-wide">
+              dibuat untuk kaum skena.
+            </p>
+            <h2
+              class="text-[26px] font-extrabold leading-tight tracking-[0.01em]"
+            >
+              Temukan tempat kopi<br />
+              ternyamanmu sekarang
+            </h2>
+          </div>
         </div>
-        <div>
-          <label class="mb-1 block text-xs font-medium">Email</label>
-          <input
+      </div>
+    </div>
+
+    <div class="flex items-center justify-center px-6 py-10 lg:px-16">
+      <div class="w-full max-w-sm space-y-6">
+        <img src="/minilogo.webp" alt="Kopiew mini" class="mb-2 h-16" />
+
+        <div class="space-y-2">
+          <h1 class="text-3xl font-bold text-text-strong">Buat akun</h1>
+          <p class="text-sm leading-relaxed text-text-body">
+            Eksplorasi kafemu, temukan pilihanmu, kapanpun, dimanapun - tetap
+            jaga produktivitasmu.
+          </p>
+        </div>
+
+        <form class="space-y-4 text-sm">
+          <InputField
+            label="Username."
+            placeholder="masukkan nama.."
+            v-model="form.username"
+          />
+
+          <InputField
+            label="email."
             type="email"
-            class="w-full rounded-xl border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-kopi-500"
+            placeholder="masukkan email.."
+            v-model="form.email"
           />
-        </div>
-        <div>
-          <label class="mb-1 block text-xs font-medium">Password</label>
-          <input
+
+          <InputField
+            label="password."
             type="password"
-            class="w-full rounded-xl border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-kopi-500"
+            placeholder="masukkan password.."
+            v-model="form.password"
+            icon="eye"
           />
-        </div>
-        <button
-          type="submit"
-          class="w-full rounded-xl2 bg-kopi-500 py-2.5 text-sm font-semibold text-white shadow-soft hover:bg-kopi-600 transition"
-        >
-          Daftar
-        </button>
-      </form>
+
+          <InputField
+            label="konfirmasi password."
+            type="password"
+            placeholder="masukkan konfirmasi password.."
+            v-model="form.passwordConfirmation"
+            icon="eye-off"
+          />
+
+          <BaseButton variant="primary" full>Daftar</BaseButton>
+        </form>
+
+        <p class="mt-2 text-center text-xs text-text-disabled">
+          Sudah punya akun?
+          <RouterLink
+            :to="{ name: 'login' }"
+            class="font-semibold text-primary"
+          >
+            Masuk
+          </RouterLink>
+        </p>
+      </div>
     </div>
   </section>
 </template>
