@@ -7,6 +7,7 @@ import TentangView from "../views/TentangView.vue";
 import LoginView from "../views/LoginView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import DesignSystemView from "../views/DesignSystemView.vue";
+import ProfileView from "../views/ProfileView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,7 +18,12 @@ const router = createRouter({
     { path: "/tentang", name: "tentang", component: TentangView },
     { path: "/login", name: "login", component: LoginView },
     { path: "/register", name: "register", component: RegisterView },
-    { path: "/design-system", name: "design-system", component: DesignSystemView },
+    {
+      path: "/design-system",
+      name: "design-system",
+      component: DesignSystemView,
+    },
+    { path: "/profile", name: "profile", component: ProfileView },
   ],
   scrollBehavior() {
     return { top: 0 };
