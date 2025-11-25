@@ -10,6 +10,7 @@
             </p>
           </div>
           <button 
+          @click="router.push({name: 'add-place'})"
           class="bg-primary-20 text-primary px-6 py-2 rounded-lg font-semibold hover:bg-cream transition-colors">
           + tambah tempat mu sendiri.
         </button>
