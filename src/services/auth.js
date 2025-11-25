@@ -8,3 +8,5 @@ export const login = (credentials) =>
 export const register = (data) => axios.post(`${API_URL}/register`, data);
 
 export const logout = () => axios.post(`${API_URL}/logout`);
+
+export const getProfile = () => axios.get(`${API_URL}/profile`);

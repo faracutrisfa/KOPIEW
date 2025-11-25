@@ -17,7 +17,21 @@ const router = createRouter({
     { path: "/tentang", name: "tentang", component: TentangView },
     { path: "/login", name: "login", component: LoginView },
     { path: "/register", name: "register", component: RegisterView },
-    { path: "/design-system", name: "design-system", component: DesignSystemView },
+    {
+      path: "/design-system",
+      name: "design-system",
+      component: DesignSystemView,
+    },
+    {
+      path: "/threads",
+      name: "threads",
+      component: () => import("../views/ThreadsView.vue"),
+    },
+    {
+      path: "/threads/:id",
+      name: "thread-detail",
+      component: () => import("../views/ThreadDetailView.vue"),
+    },
   ],
   scrollBehavior() {
     return { top: 0 };

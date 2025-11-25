@@ -4,8 +4,10 @@ import { register } from "../services/auth";
 import BaseButton from "../components/BaseButton.vue";
 import InputField from "../components/InputField.vue";
 import { useRouter } from "vue-router";
+import { useToast } from "../composables/useToast";
 
 const router = useRouter();
+const { showSuccess, showError } = useToast();
 
 const form = ref({
   username: "",
@@ -15,28 +17,26 @@ const form = ref({
 });
 
 const loading = ref(false);
-const errorMessage = ref("");
 
 const handleRegister = async () => {
   loading.value = true;
-  errorMessage.value = "";
 
   try {
-    const res = await register({
+    await register({
       name: form.value.username,
       email: form.value.email,
       password: form.value.password,
       password_confirmation: form.value.passwordConfirmation,
     });
 
-    const token = res.data.data.token;
-    localStorage.setItem("token", token);
+    showSuccess("Registrasi berhasil! Silakan login 🎉");
 
-    // alert("Berhasil daftar!");
-
-    router.push({ name: "home" });
+    setTimeout(() => {
+      router.push({ name: "login" });
+    }, 1500);
   } catch (err) {
-    errorMessage.value = err.response?.data?.message || "Register gagal.";
+    const errorMsg = err.response?.data?.message || "Registrasi gagal. Silakan coba lagi";
+    showError(errorMsg);
   } finally {
     loading.value = false;
   }
@@ -46,14 +46,9 @@ const handleRegister = async () => {
 <template>
   <section class="grid min-h-screen grid-cols-1 bg-bg-main lg:grid-cols-2">
     <div class="hidden items-center justify-center p-6 lg:flex">
-      <div
-        class="relative flex h-full w-full max-w-xl flex-col overflow-hidden rounded-3xl bg-primary text-white"
-      >
-        <img
-          src="/cup-bg.webp"
-          alt="Kopiew illustration"
-          class="pointer-events-none absolute top-1/2 left-1/2 w-3/4 -translate-x-1/2 -translate-y-1/2 object-cover"
-        />
+      <div class="relative flex h-full w-full max-w-xl flex-col overflow-hidden rounded-3xl bg-primary text-white">
+        <img src="/cup-bg.webp" alt="Kopiew illustration"
+          class="pointer-events-none absolute top-1/2 left-1/2 w-3/4 -translate-x-1/2 -translate-y-1/2 object-cover" />
         <div class="relative flex h-full flex-col justify-between px-8 py-6">
           <div>
             <img src="/white-logo.webp" alt="Kopiew Logo" class="h-10 w-auto" />
@@ -62,9 +57,7 @@ const handleRegister = async () => {
             <p class="mb-2 text-[11px] font-medium tracking-wide">
               dibuat untuk kaum skena.
             </p>
-            <h2
-              class="text-[26px] font-extrabold leading-tight tracking-[0.01em]"
-            >
+            <h2 class="text-[26px] font-extrabold leading-tight tracking-[0.01em]">
               Temukan tempat kopi<br />
               ternyamanmu sekarang
             </h2>
@@ -86,34 +79,15 @@ const handleRegister = async () => {
         </div>
 
         <form class="space-y-4 text-sm" @submit.prevent="handleRegister">
-          <InputField
-            label="Username."
-            placeholder="masukkan nama.."
-            v-model="form.username"
-          />
+          <InputField label="Username." placeholder="masukkan nama.." v-model="form.username" />
 
-          <InputField
-            label="email."
-            type="email"
-            placeholder="masukkan email.."
-            v-model="form.email"
-          />
+          <InputField label="email." type="email" placeholder="masukkan email.." v-model="form.email" />
 
-          <InputField
-            label="password."
-            type="password"
-            placeholder="masukkan password.."
-            v-model="form.password"
-            icon="eye"
-          />
+          <InputField label="password." type="password" placeholder="masukkan password.." v-model="form.password"
+            icon="eye" />
 
-          <InputField
-            label="konfirmasi password."
-            type="password"
-            placeholder="masukkan konfirmasi password.."
-            v-model="form.passwordConfirmation"
-            icon="eye-off"
-          />
+          <InputField label="konfirmasi password." type="password" placeholder="masukkan konfirmasi password.."
+            v-model="form.passwordConfirmation" icon="eye-off" />
 
           <BaseButton :disabled="loading" variant="primary" full>
             <span v-if="!loading">Daftar</span>
@@ -121,22 +95,9 @@ const handleRegister = async () => {
           </BaseButton>
         </form>
 
-        <p v-if="errorMessage" class="mt-2 text-center text-xs text-red-500">
-          {{ errorMessage }}
-        </p>
-        <p
-          v-if="successMessage"
-          class="mt-1 text-center text-xs text-emerald-600"
-        >
-          {{ successMessage }}
-        </p>
-
         <p class="mt-2 text-center text-xs text-text-disabled">
           Sudah punya akun?
-          <RouterLink
-            :to="{ name: 'login' }"
-            class="font-semibold text-primary"
-          >
+          <RouterLink :to="{ name: 'login' }" class="font-semibold text-primary">
             Masuk
           </RouterLink>
         </p>
