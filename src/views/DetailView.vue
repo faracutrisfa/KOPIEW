@@ -8,6 +8,7 @@ import ImagePreview from "../components/detailPlace/ImagePreview.vue";
 import BaseButton from "../components/BaseButton.vue";
 import GalleryUploader from "../components/detailPlace/GalleryUploader.vue";
 import SkeletonLoad from "../components/detailPlace/SkeletonLoad.vue";
+import { useRouter } from "vue-router";
 
 const props = defineProps({
   id: {
@@ -35,6 +36,7 @@ const showReviewInput = ref(false);
 const newReview = ref("");
 const selectedRating = ref(0);
 const showUpload = ref(false);
+const router = useRouter();
 
 onMounted(async () => {
     try {
@@ -46,7 +48,7 @@ onMounted(async () => {
         } catch (err) {
             if (err.response && err.response.status === 404) {
                 console.log("Tempat tidak ditemukan");
-                window.history.back();
+                router.back();
                 return;
             } else {
                 throw err;

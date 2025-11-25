@@ -103,7 +103,9 @@ import { ref, computed, onMounted } from "vue";
 import CafeCard from "../components/CafeCard.vue";
 import FilterSidebar from "../components/FilterSidebar.vue";
 import { getPlaces } from "../services/place.js";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const places = ref([]);
 const loading = ref(true);
 const error = ref(null);
