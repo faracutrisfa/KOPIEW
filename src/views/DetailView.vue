@@ -36,7 +36,9 @@ const selectedRating = ref(0);
 const showUpload = ref(false);
 
 onMounted(async () => {
-    profileData.value = await getProfile();
+    if(getToken()) {
+        profileData.value = await getProfile();
+    }
     placeGallery.value = await getGallery(props.id);
     placeData.value = await placeDetail(props.id);
     placeReviewsData.value = await placeReviews(props.id);
@@ -119,14 +121,14 @@ const deleteReview = async (id) => {
     
                 <div class="flex w-full gap-10 bg-primary/80 px-4 py-5 rounded-lg text-white items-center">             
                     <div class="flex gap-2">
-                        <h1 class="font-bold text-6xl">{{ placeRating.total_bintang / placeRating.total_reviewer }}</h1>
+                        <h1 class="font-bold text-6xl">{{ placeRating?.total_bintang / placeRating?.total_reviewer }}</h1>
                         <p class="text-lg pb-1">dari 5</p>
                     </div>
     
                     <div class="flex-1">
                         <Rating 
-                            :ratingCounts="{5: placeRating.bintang_5, 4: placeRating.bintang_4, 3: placeRating.bintang_3, 2: placeRating.bintang_2, 1: placeRating.bintang_1}" 
-                            :totalReviews="placeRating.total_bintang" 
+                            :ratingCounts="{5: placeRating?.bintang_5, 4: placeRating?.bintang_4, 3: placeRating?.bintang_3, 2: placeRating?.bintang_2, 1: placeRating?.bintang_1}" 
+                            :totalReviews="placeRating?.total_bintang" 
                         />
                     </div>
                 </div>
@@ -150,13 +152,13 @@ const deleteReview = async (id) => {
                             viewBox="0 0 24 24"
                             fill="currentColor"
                             class="size-5"
-                            :class="(placeRating.total_bintang / placeRating.total_reviewer) >= i ? 'text-primary' : 'text-gray-200'">
+                            :class="(placeRating?.total_bintang / placeRating?.total_reviewer) >= i ? 'text-primary' : 'text-gray-200'">
                             <path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005Z" clip-rule="evenodd" />
                         </svg>
                     </div>
 
-                    <p class="font-bold text-sm">{{ placeRating.total_bintang / placeRating.total_reviewer }}</p>
-                    <p class="text-sm font-bold text-gray-200">({{ placeRating.total_reviewer }} review)</p>
+                    <p class="font-bold text-sm">{{ placeRating?.total_bintang / placeRating?.total_reviewer }}</p>
+                    <p class="text-sm font-bold text-gray-200">({{ placeRating?.total_reviewer }} review)</p>
                 </div>
     
                 <p v-if="placeData" class="text-gray-600 line-clamp-8">
@@ -258,7 +260,7 @@ const deleteReview = async (id) => {
                             />
                         </div>
                         <button
-                            v-if="img.user.id === profileData.data.data.id"
+                            v-if="img.user.id === profileData?.data.data.id"
                             @click="deleteImage(img.id)"
                             class="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-tr-lg  hover:bg-red-600"
                             title="Hapus gambar"
