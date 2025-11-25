@@ -13,6 +13,20 @@ const NAV_LINKS = [
   { name: "tentang", label: "Tentang" },
 ];
 
+const isUserLoggedIn = computed(() => {
+  return !!localStorage.getItem('token');
+});
+
+const LOGGED_IN_NAV_LINKS = computed(() => {
+    return [
+        { name: "home", label: "Beranda" },
+        { name: "fitur", label: "Fitur" },
+        { name: "tempat", label: "Tempat" },
+        { name: "wishlist", label: "Wishlist" },
+        { name: "tentang", label: "Tentang" },
+    ];
+});
+
 const activeRouteName = computed(() => route.name);
 const isActive = (name) => activeRouteName.value === name;
 </script>
@@ -43,13 +57,24 @@ const isActive = (name) => activeRouteName.value === name;
       </nav>
 
       <div class="hidden items-center gap-3 md:flex">
-        <RouterLink :to="{ name: 'login' }">
-          <BaseButton full="false">Masuk</BaseButton>
-        </RouterLink>
-
-        <RouterLink :to="{ name: 'register' }">
-          <BaseButton full="false" variant="outline">Daftar</BaseButton>
-        </RouterLink>
+        <template v-if="!isUserLoggedIn">
+            <RouterLink :to="{ name: 'login' }">
+              <BaseButton full="false">Masuk</BaseButton>
+            </RouterLink>
+            <RouterLink :to="{ name: 'register' }">
+              <BaseButton full="false" variant="outline">Daftar</BaseButton>
+            </RouterLink>
+        </template>
+        
+        <template v-else>
+            <div class="flex items-center gap-4 text-text-body">
+                <div class="relative flex items-center border border-border rounded-full pr-2">
+                    <input type="text" placeholder="Cari Sesuatu" class="w-28 text-sm p-1 rounded-full border-none focus:outline-none focus:ring-0">
+                    <button aria-label="Search" class="ml-1">🔍</button>
+                </div>
+                <RouterLink :to="{ name: 'wishlist' }" aria-label="Wishlist">❤️</RouterLink>
+                </div>
+        </template>
       </div>
 
       <button

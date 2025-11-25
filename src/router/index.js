@@ -8,6 +8,7 @@ import LoginView from "../views/LoginView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import DesignSystemView from "../views/DesignSystemView.vue";
 import DetailView from "../views/DetailView.vue";
+import WishlistView from "../views/WishlistView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -20,10 +21,20 @@ const router = createRouter({
     { path: "/register", name: "register", component: RegisterView },
     { path: "/design-system", name: "design-system", component: DesignSystemView },
     { path: "/place/detail/:id", name: "detail", component: DetailView, props: true },
+    { path: "/wishlist", name: "wishlist", component: WishlistView, meta: { requiresAuth: true } },
   ],
   scrollBehavior() {
     return { top: 0 };
   },
+});
+
+router.beforeEach((to, from, next) => {
+    const loggedIn = localStorage.getItem('token'); 
+    if (to.meta.requiresAuth && !loggedIn) {
+        next({ name: 'login' });
+    } else {
+        next();
+    }
 });
 
 export default router;
