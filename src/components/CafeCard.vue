@@ -112,7 +112,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['view-detail', 'toggled', 'removed']);
-const router = useRouter();
 
 const router = useRouter();
 
