@@ -31,8 +31,8 @@
             </p>
 
             <div class="flex justify-between items-center gap-4">
-                <button class="flex h-10 w-14 items-center justify-center rounded-full  transition-all hover:scale-110"
-                    :class="isFavorite ? 'text-red-500' : 'text-gray-300'" @click="toggleFavorite"
+                <button class="flex h-10 w-14 items-center justify-center rounded-full transition-all hover:scale-110"
+                    :class="isFavorite ? 'text-red-500' : 'text-gray-300'" @click="confirmToggle"
                     aria-label="Toggle favorite">
                     <svg class="h-8 w-8 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -44,12 +44,32 @@
                 </BaseButton>
             </div>
         </div>
+
+        <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white p-6 rounded-lg shadow-xl w-80">
+                <h4 class="text-xl font-bold mb-4">{{ isFavorite ? 'Hapus dari Wishlist?' : 'Tambahkan ke Wishlist?' }}</h4>
+                <p class="mb-6 text-text-body">
+                    {{ isFavorite 
+                        ? 'Anda yakin ingin menghapus ' + name + ' dari daftar Wishlist Anda?' 
+                        : 'Anda yakin ingin menambahkan ' + name + ' ke daftar Wishlist Anda?' }}
+                </p>
+                <div class="flex justify-end gap-3">
+                    <button @click="showModal = false" class="px-4 py-2 text-sm border rounded-lg hover:bg-gray-100">Batal</button>
+                    <button @click="handleToggleAction" 
+                            :class="['px-4 py-2 text-sm text-white rounded-lg', isFavorite ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600']">
+                        {{ isFavorite ? 'Ya, Hapus' : 'Ya, Tambah' }}
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import { useRouter } from "vue-router";
 import BaseButton from "./BaseButton.vue";
+import { createWishlist, deleteWishlistItem } from '../services/wishlist';
 
 const props = defineProps({
     id: {
@@ -84,17 +104,66 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    initialWishlistId: {
+        type: [Number, null],
+        default: null,
+    }
 });
 
-const emit = defineEmits(['view-detail']);
+const emit = defineEmits(['view-detail', 'toggled', 'removed']);
+const router = useRouter();
 
 const isFavorite = ref(props.favorite);
+const showModal = ref(false);
+const currentWishlistId = ref(props.initialWishlistId);
 
-const toggleFavorite = () => {
-    isFavorite.value = !isFavorite.value;
+watch(() => props.favorite, (newVal) => {
+    isFavorite.value = newVal;
+});
+
+const confirmToggle = () => {
+    if (!localStorage.getItem('token')) {
+        alert('Anda harus login untuk menggunakan fitur Wishlist.');
+        return;
+    }
+    showModal.value = true;
+};
+
+const handleToggleAction = async () => {
+    showModal.value = false;
+
+    try {
+        if (isFavorite.value) {
+            const idToDelete = currentWishlistId.value; 
+            
+            if (idToDelete) {
+                await deleteWishlistItem(idToDelete);
+                isFavorite.value = false;
+                currentWishlistId.value = null;
+                alert('Berhasil dihapus dari Wishlist!');
+                if (props.initialWishlistId) {
+                    emit('removed'); 
+                } else {
+                    emit('toggled'); 
+                }
+            } else {
+                alert('Gagal menghapus: ID Wishlist tidak ditemukan. (Pastikan API Home/Trending menyediakan ID Wishlist untuk item yang sudah di-like).');
+            }
+        } else {
+            const response = await createWishlist(props.id);
+            isFavorite.value = true;
+            currentWishlistId.value = response.data.data.id;
+            alert('Berhasil ditambahkan ke Wishlist!');
+            emit('toggled'); 
+        }
+    } catch (error) {
+        console.error("Gagal melakukan aksi Wishlist:", error);
+        alert(`Gagal: ${error.response?.data?.message || error.message}`);
+    }
 };
 
 const viewDetail = () => {
+    router.push({ name: 'place-detail', params: { id: props.id } });
     emit('view-detail', props.id);
 };
 </script>
