@@ -222,7 +222,7 @@ const deleteReview = async (id) => {
                         :replies="review.replies ?? []"
                         :userId="review.user_id"
                         :profileData="profileData"
-                        @click="deleteReview(review.id)"
+                        :click="() => deleteReview(review.id)"
                     />
                 </div>
                 <div class="flex justify-between items-center mb-3">

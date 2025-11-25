@@ -40,7 +40,7 @@ const activeImage = ref(props.reviewImage?.[0] ?? null);
                     <p class="text-[10px]">{{ reviewDate ?? "09/09/9999" }}</p>
                 </div>
             </div>
-            <BaseButton @click="click" size="sm" v-if="props.userId === props.profileData?.data.data.id" :full="false" variant="outline">
+            <BaseButton @click="props.click" size="sm" v-if="props.userId === props.profileData?.data.data.id" :full="false" variant="outline">
                 Buang
             </BaseButton>
         </div>
