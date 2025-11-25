@@ -82,7 +82,6 @@
               :image="getPlaceImage(place)"
               :rating="calculateAverageRating(place.reviews)"
               :duration="place.operating_hours"
-              @view-detail="handleViewDetail"
             />
           </div>
           
@@ -163,12 +162,6 @@ const filteredPlaces = computed (() => {
 
 const handleFilterChange = (newFilters) => {
   filters.value = newFilters;
-};
-
-const handleViewDetail = (placeId) => {
-  console.log("View detail for place:", placeId);
-  // TODO: Navigasi ke halaman detail
-  router.push(`/place/detail/${placeId}`);
 };
 
 const getPlaceImage = (place) => {

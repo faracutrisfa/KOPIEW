@@ -49,6 +49,7 @@
 
 <script setup>
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import BaseButton from "./BaseButton.vue";
 
 const props = defineProps({
@@ -88,6 +89,8 @@ const props = defineProps({
 
 const emit = defineEmits(['view-detail']);
 
+const router = useRouter();
+
 const isFavorite = ref(props.favorite);
 
 const toggleFavorite = () => {
@@ -95,6 +98,6 @@ const toggleFavorite = () => {
 };
 
 const viewDetail = () => {
-    emit('view-detail', props.id);
+    router.push({name: 'detail', params: {id: props.id}})
 };
 </script>
