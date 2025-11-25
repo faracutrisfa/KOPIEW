@@ -7,6 +7,7 @@ import normalizeImageUrl, { getToken } from "../helper/Helper";
 import ImagePreview from "../components/detailPlace/ImagePreview.vue";
 import BaseButton from "../components/BaseButton.vue";
 import GalleryUploader from "../components/detailPlace/GalleryUploader.vue";
+import SkeletonLoad from "../components/detailPlace/SkeletonLoad.vue";
 
 const props = defineProps({
   id: {
@@ -40,15 +41,24 @@ onMounted(async () => {
         if(getToken()) {
             profileData.value = await getProfile();
         }
+        try {
+            placeData.value = await placeDetail(props.id);
+        } catch (err) {
+            if (err.response && err.response.status === 404) {
+                console.log("Tempat tidak ditemukan");
+                window.history.back();
+                return;
+            } else {
+                throw err;
+            }
+        }
         placeGallery.value = await getGallery(props.id);
         placeData.value = await placeDetail(props.id);
         placeReviewsData.value = await placeReviews(props.id);
         placeRating.value = await getRating(props.id);
     } catch (error) {
-        if (error.response && error.response.status === 404) {
-            console.log("Data tidak ditemukan");
-            window.history.back();
-        }
+        console.log("Terjadi kesalahan: saat melakukan get data");
+        console.error(error);
     }
 });
 
@@ -117,9 +127,10 @@ const deleteReview = async (id) => {
 
 <template>
     <div class="min-h-screen px-6 py-10">
-        <div v-if="!placeData">
-            Loading...
+        <div v-if="!placeData && !placeRating && !placeReviewsData && !placeGallery">
+            <SkeletonLoad />
         </div>
+
         <div v-if="placeData" class="flex gap-6 h-full">
             <div class="sticky top-3 self-start flex flex-col gap-4">
                 <div class="flex flex-col">
@@ -128,7 +139,14 @@ const deleteReview = async (id) => {
     
                 <div class="flex w-full gap-10 bg-primary/80 px-4 py-5 rounded-lg text-white items-center">             
                     <div class="flex gap-2">
-                        <h1 class="font-bold text-6xl">{{ placeRating?.total_bintang / placeRating?.total_reviewer }}</h1>
+                        <h1 class="font-bold text-6xl">
+                            {{
+                                placeRating?.total_reviewer > 0 &&
+                                placeRating?.total_bintang != null
+                                ? (placeRating.total_bintang / placeRating.total_reviewer).toFixed(1)
+                                : 0
+                            }}
+                        </h1>
                         <p class="text-lg pb-1">dari 5</p>
                     </div>
     
@@ -147,9 +165,9 @@ const deleteReview = async (id) => {
                 <div class="flex items-center gap-3">
                     <h2 v-if="placeData" class="text-2xl font-semibold">{{ placeData.data.data.name }}</h2>
     
-                    <div class="bg-primary-40 px-3 py-1 rounded text-white text-lg">
+                    <!-- <div class="bg-primary-40 px-3 py-1 rounded text-white text-lg">
                         24 Jam
-                    </div>
+                    </div> -->
                 </div>
     
                 <div class="flex gap-2 pb-2 items-center my-3">
@@ -164,7 +182,15 @@ const deleteReview = async (id) => {
                         </svg>
                     </div>
 
-                    <p class="font-bold text-sm">{{ placeRating?.total_bintang / placeRating?.total_reviewer }}</p>
+                    <p class="font-bold text-sm">
+                        {{
+                            placeRating?.total_reviewer > 0 &&
+                            placeRating?.total_bintang != null
+                            ? (placeRating.total_bintang / placeRating.total_reviewer).toFixed(1)
+                            : 0
+                        }}
+                    </p>
+
                     <p class="text-sm font-bold text-gray-200">({{ placeRating?.total_reviewer }} review)</p>
                 </div>
     
