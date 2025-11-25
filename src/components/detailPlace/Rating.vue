@@ -35,9 +35,15 @@ const props = defineProps({
 
             <div class="w-full h-2">
                 <div class="w-full bg-white h-2 rounded">
-                    <div 
-                        :class="'h-2 bg-primary rounded ' + (ratingCounts[star] === 0 ? 'hidden' : '')"
-                        :style="{ width: (ratingCounts[star] / totalReviews * 100) + '%' }">
+                    <div
+                        :class="'h-2 bg-primary rounded transition-all'"
+                        :style="{
+                            width:
+                                totalReviews > 0
+                                    ? ((ratingCounts[star] || 0) / totalReviews) * 100 + '%'
+                                    : '0%'
+                        }"
+                    >
                     </div>
                 </div>
             </div>
