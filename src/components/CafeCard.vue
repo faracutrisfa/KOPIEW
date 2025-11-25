@@ -112,6 +112,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['view-detail', 'toggled', 'removed']);
+const router = useRouter();
 
 const isFavorite = ref(props.favorite);
 const showModal = ref(false);
