@@ -40,9 +40,10 @@ const router = useRouter();
 
 onMounted(async () => {
     try {
-        if(getToken()) {
+        if (getToken()) {
             profileData.value = await getProfile();
         }
+
         try {
             placeData.value = await placeDetail(props.id);
         } catch (err) {
@@ -50,16 +51,33 @@ onMounted(async () => {
                 console.log("Tempat tidak ditemukan");
                 router.back();
                 return;
-            } else {
-                throw err;
             }
+            throw err;
         }
-        placeGallery.value = await getGallery(props.id);
-        placeData.value = await placeDetail(props.id);
-        placeReviewsData.value = await placeReviews(props.id);
-        placeRating.value = await getRating(props.id);
+
+        try {
+            placeGallery.value = await getGallery(props.id);
+        } catch (err) {
+            console.warn("Gallery tidak ditemukan");
+            placeGallery.value = []; 
+        }
+
+        try {
+            placeReviewsData.value = await placeReviews(props.id);
+        } catch (err) {
+            console.warn("Reviews tidak ditemukan");
+            placeReviewsData.value = [];
+        }
+
+        try {
+            placeRating.value = await getRating(props.id);
+        } catch (err) {
+            console.warn("Rating tidak ditemukan");
+            placeRating.value = { total_bintang: 0, total_reviewer: 0 };
+        }
+
     } catch (error) {
-        console.log("Terjadi kesalahan: saat melakukan get data");
+        console.log("Terjadi kesalahan saat mengambil data:");
         console.error(error);
     }
 });
