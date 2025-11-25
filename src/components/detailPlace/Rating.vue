@@ -17,13 +17,11 @@ const props = defineProps({
 <template>
     <div class="flex flex-col gap-2">
 
-        <!-- Loop Rating dari 5 ke 1 -->
         <div 
             v-for="star in [5,4,3,2,1]" 
             :key="star" 
             class="flex w-full gap-2 items-center"
         >
-            <!-- Icon Bintang -->
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" class="size-5">
                 <path fill-rule="evenodd"
                     d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 
@@ -33,10 +31,8 @@ const props = defineProps({
                     clip-rule="evenodd"/>
             </svg>
 
-            <!-- Text Rating (5 / 4 / 3 / 2 / 1) -->
             <p>{{ star }}</p>
 
-            <!-- Progress Bar -->
             <div class="w-full h-2">
                 <div class="w-full bg-white h-2 rounded">
                     <div 

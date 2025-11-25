@@ -63,7 +63,6 @@ const submitUpload = () => {
 
     emit("uploaded", formData);
 
-    // Reset state
     selectedFile.value = null;
     previewImage.value = null;
     if (fileInput.value) fileInput.value.value = null;
@@ -103,13 +102,11 @@ const submitUpload = () => {
                 @change="handleFileInput"
             />
 
-            <!-- FIX: sekarang aman -->
             <BaseButton variant="outline" size="sm" @click="triggerFileInput">
                 Pilih File
             </BaseButton>
         </div>
 
-        <!-- Preview -->
         <div
             v-if="previewImage"
             class="w-32 h-32 rounded-lg overflow-hidden mt-4 border shadow"

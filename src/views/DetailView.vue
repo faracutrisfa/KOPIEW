@@ -175,7 +175,6 @@ const deleteReview = async (id) => {
                 </div>
 
                 <div v-if="showReviewInput" class="mb-4">
-                    <!-- Rating -->
                     <div class="flex gap-1 mb-2">
                         <svg
                             v-for="i in 5"
@@ -191,7 +190,6 @@ const deleteReview = async (id) => {
                         </svg>
                     </div>
 
-                    <!-- Review textarea -->
                     <textarea
                         v-model="newReview"
                         placeholder="Tulis review Anda..."
