@@ -113,8 +113,6 @@ const props = defineProps({
 
 const emit = defineEmits(['view-detail', 'toggled', 'removed']);
 
-const router = useRouter();
-
 const isFavorite = ref(props.favorite);
 const showModal = ref(false);
 const currentWishlistId = ref(props.initialWishlistId);
@@ -165,7 +163,7 @@ const handleToggleAction = async () => {
 };
 
 const viewDetail = () => {
-    router.push({ name: 'place-detail', params: { id: props.id } });
+    router.push({ name: 'detail', params: { id: props.id } });
     emit('view-detail', props.id);
 };
 </script>
