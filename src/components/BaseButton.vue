@@ -36,6 +36,7 @@ const variantClass = computed(() => {
       "shadow-none",
       "hover:bg-bg-soft",
       "disabled:text-text-disabled disabled:border-gray-200 disabled:bg-bg-main",
+      "cursor-pointer",
     ].join(" ");
   }
 
@@ -56,6 +57,7 @@ const variantClass = computed(() => {
     "shadow-soft",
     "hover:bg-primary-40",
     "disabled:bg-gray-200 disabled:text-text-disabled",
+    "cursor-pointer",
   ].join(" ");
 });
 

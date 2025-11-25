@@ -2,12 +2,14 @@
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import Navbar from "./components/Navbar.vue";
+import Footer from "./components/Footer.vue";
 
 const route = useRoute();
 
 const AUTH_ROUTES = ["login", "register"];
 
 const showNavbar = computed(() => !AUTH_ROUTES.includes(route.name));
+const showFooter = computed(() => !AUTH_ROUTES.includes(route.name));
 </script>
 
 <template>
@@ -17,5 +19,7 @@ const showNavbar = computed(() => !AUTH_ROUTES.includes(route.name));
     <main>
       <RouterView />
     </main>
+
+    <Footer v-if="showFooter" />
   </div>
 </template>

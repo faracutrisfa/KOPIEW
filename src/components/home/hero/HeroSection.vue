@@ -1,6 +1,7 @@
 <template>
     <section class="container mx-auto px-6 py-1 md:py-2">
-        <div class="flex flex-col items-center text-center">
+        <div ref="elementRef"
+            :class="['flex flex-col items-center text-center scroll-animate', { 'is-visible': isVisible }]">
             <div class="mb-6 border rounded-md flex items-center text-xs md:text-sm">
                 <span class="pl-4 pr-1 py-1.5 font-medium text-text-strong">
                     Halo
@@ -14,7 +15,8 @@
             </div>
 
             <div class="mb-8">
-                <img src="/minilogo.webp" alt="KOPIEW Logo" class="h-20 w-auto md:h-24" />
+                <img src="/minilogo.webp" alt="KOPIEW Logo - Platform pencarian cafe untuk kalcer"
+                    class="h-20 w-auto md:h-24" />
             </div>
             <h1 class="mb-4 max-w-5xl text-xl font-bold leading-tight text-text-strong md:text-5xl lg:text-6xl">
                 Platform lu buat nyari tempat
@@ -30,3 +32,9 @@
         </div>
     </section>
 </template>
+
+<script setup>
+import { useScrollAnimation } from '../../../composables/useScrollAnimation';
+
+const { elementRef, isVisible } = useScrollAnimation({ threshold: 0.2 });
+</script>
