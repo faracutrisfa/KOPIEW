@@ -37,6 +37,7 @@ const newReview = ref("");
 const selectedRating = ref(0);
 const showUpload = ref(false);
 const router = useRouter();
+const galleryUploader = ref(null);
 
 onMounted(async () => {
     try {
@@ -94,6 +95,8 @@ const handleUpload = async (formData) => {
         await uploadGalleryImage(props.id, formData); 
         placeGallery.value = await getGallery(props.id);
         alert("Gambar berhasil diupload");
+        galleryUploader.value?.clearInput();
+        showUpload.value = false;
     } catch (err) {
         alert("Gagal mengupload gambar");
         console.error(err);
@@ -101,14 +104,26 @@ const handleUpload = async (formData) => {
 };
 
 const deleteImage = async (id) => {
+    const ok = confirm("Apakah ingin menghapus gambar ini?");
+    if (!ok) return;
+
     try {
-        confirm("Apakah ingin menghapus gambar ini?")
-        await deleteGalleryImage(props.id, id)
-        placeGallery.value = await getGallery(props.id);
+        await deleteGalleryImage(props.id, id);
         alert("Gambar berhasil dihapus");
+
+        try {
+            placeGallery.value = await getGallery(props.id);
+        } catch (err) {
+            if (err.response && err.response.status === 404) {
+                placeGallery.value = []; 
+                return;
+            }
+            console.warn("Galeri gagal di-refresh", err);
+        }
+
     } catch (error) {
         alert("Gagal menghapus gambar");
-        console.error(error);   
+        console.error(error);
     }
 };
 
@@ -135,8 +150,16 @@ const deleteReview = async (id) => {
         if (!confirmDelete) return;
 
         await reviewDelete(props.id, id);
-        placeRating.value = await getRating(props.id);
-        placeReviewsData.value = await placeReviews(props.id);
+
+        try {
+            placeReviewsData.value = await placeReviews(props.id);
+            placeRating.value = await getRating(props.id);
+        } catch (error) {
+            if (error.response && error.response.status === 404) {
+                placeReviewsData.value = []; 
+                return;
+            }
+        }
         alert("Review berhasil dihapus");
     } catch (error) {
         alert("Gagal menghapus review");
@@ -284,6 +307,7 @@ const deleteReview = async (id) => {
                 </div>
 
                 <GalleryUploader
+                    ref="galleryUploader"
                     v-if="showUpload"
                     @uploaded="handleUpload"
                     @close="showUpload = false"
@@ -295,7 +319,7 @@ const deleteReview = async (id) => {
                 >
                     <p
                         class="col-span-4 text-center"
-                        v-if="!placeData?.data?.data?.photos?.length"
+                        v-if="!placeGallery?.data?.data"
                     >
                         Tidak memiliki galery
                     </p>

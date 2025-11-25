@@ -62,11 +62,17 @@ const submitUpload = () => {
     formData.append("url", selectedFile.value);
 
     emit("uploaded", formData);
+};
 
+const clearInput = () => {
     selectedFile.value = null;
     previewImage.value = null;
     if (fileInput.value) fileInput.value.value = null;
 };
+
+defineExpose({
+    clearInput
+});
 </script>
 
 
