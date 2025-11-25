@@ -36,13 +36,20 @@ const selectedRating = ref(0);
 const showUpload = ref(false);
 
 onMounted(async () => {
-    if(getToken()) {
-        profileData.value = await getProfile();
+    try {
+        if(getToken()) {
+            profileData.value = await getProfile();
+        }
+        placeGallery.value = await getGallery(props.id);
+        placeData.value = await placeDetail(props.id);
+        placeReviewsData.value = await placeReviews(props.id);
+        placeRating.value = await getRating(props.id);
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
+            console.log("Data tidak ditemukan");
+            window.history.back();
+        }
     }
-    placeGallery.value = await getGallery(props.id);
-    placeData.value = await placeDetail(props.id);
-    placeReviewsData.value = await placeReviews(props.id);
-    placeRating.value = await getRating(props.id);
 });
 
 const hasUserReviewed = computed(() => {
