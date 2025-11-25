@@ -79,6 +79,7 @@ const submitReview = async () => {
   try {
     await uploadReview(props.id, { content: newReview.value, rating: selectedRating.value }); 
     placeReviewsData.value = await placeReviews(props.id);
+    placeRating.value = await getRating(props.id);
     newReview.value = "";
     selectedRating.value = 0;
     showReviewInput.value = false;
@@ -95,6 +96,7 @@ const deleteReview = async (id) => {
         if (!confirmDelete) return;
 
         await reviewDelete(props.id, id);
+        placeRating.value = await getRating(props.id);
         placeReviewsData.value = await placeReviews(props.id);
         alert("Review berhasil dihapus");
     } catch (error) {
