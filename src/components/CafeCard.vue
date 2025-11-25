@@ -66,6 +66,7 @@
 </template>
 
 <script setup>
+
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import BaseButton from "./BaseButton.vue";
@@ -111,6 +112,8 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['view-detail', 'toggled', 'removed']);
+const router = useRouter();
+
 const router = useRouter();
 
 const isFavorite = ref(props.favorite);

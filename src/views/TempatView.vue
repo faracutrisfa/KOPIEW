@@ -82,7 +82,6 @@
               :image="getPlaceImage(place)"
               :rating="calculateAverageRating(place.reviews)"
               :duration="place.operating_hours"
-              @view-detail="handleViewDetail"
             />
           </div>
           
@@ -104,7 +103,9 @@ import { ref, computed, onMounted } from "vue";
 import CafeCard from "../components/CafeCard.vue";
 import FilterSidebar from "../components/FilterSidebar.vue";
 import { getPlaces } from "../services/place.js";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const places = ref([]);
 const loading = ref(true);
 const error = ref(null);
@@ -161,11 +162,6 @@ const filteredPlaces = computed (() => {
 
 const handleFilterChange = (newFilters) => {
   filters.value = newFilters;
-};
-
-const handleViewDetail = (placeId) => {
-  console.log("View detail for place:", placeId);
-  // TODO: Navigasi ke halaman detail
 };
 
 const getPlaceImage = (place) => {
