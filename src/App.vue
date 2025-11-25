@@ -3,6 +3,7 @@ import { computed } from "vue";
 import { useRoute } from "vue-router";
 import Navbar from "./components/Navbar.vue";
 import Footer from "./components/Footer.vue";
+import ToastNotification from "./components/ToastNotification.vue";
 
 const route = useRoute();
 
@@ -21,5 +22,8 @@ const showFooter = computed(() => !AUTH_ROUTES.includes(route.name));
     </main>
 
     <Footer v-if="showFooter" />
+
+    <!-- Global Toast Notifications -->
+    <ToastNotification />
   </div>
 </template>

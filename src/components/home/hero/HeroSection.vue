@@ -7,7 +7,7 @@
                     Halo
                 </span>
                 <span class="py-1 px-1 rounded-xs bg-primary text-white font-medium">
-                    Sobat Kalcer
+                    {{ userName }}
                 </span>
                 <span class="pr-4 pl-1 py-1.5 font-medium text-text-body">
                     Selamat datang
@@ -34,7 +34,14 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import { useScrollAnimation } from '../../../composables/useScrollAnimation';
+import { useAuthStore } from '../../../stores/auth';
 
 const { elementRef, isVisible } = useScrollAnimation({ threshold: 0.2 });
+const authStore = useAuthStore();
+
+const userName = computed(() => {
+    return authStore.currentUser?.name || 'Sobat Kalcer';
+});
 </script>
