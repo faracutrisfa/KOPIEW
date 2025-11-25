@@ -128,7 +128,14 @@ const deleteReview = async (id) => {
     
                 <div class="flex w-full gap-10 bg-primary/80 px-4 py-5 rounded-lg text-white items-center">             
                     <div class="flex gap-2">
-                        <h1 class="font-bold text-6xl">{{ placeRating?.total_bintang / placeRating?.total_reviewer }}</h1>
+                        <h1 class="font-bold text-6xl">
+                            {{
+                                placeRating?.total_reviewer > 0 &&
+                                placeRating?.total_bintang != null
+                                ? (placeRating.total_bintang / placeRating.total_reviewer).toFixed(1)
+                                : 0
+                            }}
+                        </h1>
                         <p class="text-lg pb-1">dari 5</p>
                     </div>
     
@@ -164,7 +171,15 @@ const deleteReview = async (id) => {
                         </svg>
                     </div>
 
-                    <p class="font-bold text-sm">{{ placeRating?.total_bintang / placeRating?.total_reviewer }}</p>
+                    <p class="font-bold text-sm">
+                        {{
+                            placeRating?.total_reviewer > 0 &&
+                            placeRating?.total_bintang != null
+                            ? (placeRating.total_bintang / placeRating.total_reviewer).toFixed(1)
+                            : 0
+                        }}
+                    </p>
+
                     <p class="text-sm font-bold text-gray-200">({{ placeRating?.total_reviewer }} review)</p>
                 </div>
     
