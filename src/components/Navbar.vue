@@ -14,9 +14,23 @@ const showProfileDropdown = ref(false);
 const NAV_LINKS = [
   { name: "home", label: "Home" },
   { name: "fitur", label: "Fitur" },
-  { name: "rekomendasi", label: "Rekomendasi" },
+  { name: "tempat", label: "Tempat" },
   { name: "tentang", label: "Tentang" },
 ];
+
+const isUserLoggedIn = computed(() => {
+  return !!localStorage.getItem('token');
+});
+
+const LOGGED_IN_NAV_LINKS = computed(() => {
+    return [
+        { name: "home", label: "Beranda" },
+        { name: "fitur", label: "Fitur" },
+        { name: "tempat", label: "Tempat" },
+        { name: "wishlist", label: "Wishlist" },
+        { name: "tentang", label: "Tentang" },
+    ];
+});
 
 const activeRouteName = computed(() => route.name);
 const isActive = (name) => activeRouteName.value === name;
@@ -48,9 +62,7 @@ const handleLogout = () => {
         </RouterLink>
       </nav>
 
-      <!-- Right Side: Guest vs Authenticated -->
       <div class="hidden items-center gap-3 md:flex">
-        <!-- Guest State -->
         <template v-if="!authStore.isAuthenticated">
           <RouterLink :to="{ name: 'login' }">
             <BaseButton full="false">Masuk</BaseButton>
@@ -61,9 +73,7 @@ const handleLogout = () => {
           </RouterLink>
         </template>
 
-        <!-- Authenticated State -->
         <template v-else>
-          <!-- Search Input -->
           <div class="relative">
             <input type="text" placeholder="cari sesuatu"
               class="w-64 rounded-lg border border-gray-300 px-4 py-2 text-sm text-text-body placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20" />
@@ -74,7 +84,6 @@ const handleLogout = () => {
             </svg>
           </div>
 
-          <!-- Like/Wishlist Icon -->
           <button class="text-text-body hover:text-primary transition-colors">
             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -82,7 +91,6 @@ const handleLogout = () => {
             </svg>
           </button>
 
-          <!-- Profile Dropdown -->
           <div class="relative">
             <button @click="showProfileDropdown = !showProfileDropdown"
               class="flex items-center gap-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/20">
@@ -90,7 +98,6 @@ const handleLogout = () => {
                 class="h-10 w-10 rounded-full object-cover border-2 border-gray-200" />
             </button>
 
-            <!-- Dropdown Menu -->
             <div v-if="showProfileDropdown" @click.stop
               class="absolute right-0 mt-2 w-48 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
               <div class="py-1">
@@ -116,7 +123,6 @@ const handleLogout = () => {
       </button>
     </div>
 
-    <!-- Mobile menu -->
     <div v-if="isOpen"
       class="absolute top-full left-0 right-0 border-t border-gray-100 bg-bg-main shadow-lg md:hidden z-40">
       <nav class="mx-auto flex flex-col gap-1 px-6 py-3 text-sm font-semibold text-text-body">
@@ -129,7 +135,6 @@ const handleLogout = () => {
         </RouterLink>
 
         <div class="mt-3 flex flex-col gap-2">
-          <!-- Guest State -->
           <template v-if="!authStore.isAuthenticated">
             <RouterLink :to="{ name: 'login' }" @click="isOpen = false">
               <BaseButton size="sm">Masuk</BaseButton>
@@ -140,7 +145,6 @@ const handleLogout = () => {
             </RouterLink>
           </template>
 
-          <!-- Authenticated State -->
           <template v-else>
             <button @click="isOpen = false">
               <BaseButton size="sm" variant="outline">Profile</BaseButton>
