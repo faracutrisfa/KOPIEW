@@ -19,7 +19,7 @@ const router = createRouter({
     { path: "/login", name: "login", component: LoginView },
     { path: "/register", name: "register", component: RegisterView },
     { path: "/design-system", name: "design-system", component: DesignSystemView },
-    { path: "/detail/:id", name: "detail", component: DetailView },
+    { path: "/place/detail/:id", name: "detail", component: DetailView, props: true },
   ],
   scrollBehavior() {
     return { top: 0 };
