@@ -19,7 +19,7 @@
             <div class="mb-3 flex items-center gap-1">
                 <div class="flex items-center gap-0.5">
                     <span v-for="star in 5" :key="star" class="text-sm"
-                        :class="star <= rating ? 'text-text-disabled' : 'text-gray-300'">
+                        :class="star <= rating ? 'text-yellow-500' : 'text-gray-300'">
                         ★
                     </span>
                 </div>
@@ -39,7 +39,7 @@
                             d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                     </svg>
                 </button>
-                <BaseButton :full="true" variant="primary" size="md">
+                <BaseButton :full="true" variant="primary" size="md" @click="viewDetail">
                     Lihat Detail
                 </BaseButton>
             </div>
@@ -52,6 +52,10 @@ import { ref } from "vue";
 import BaseButton from "./BaseButton.vue";
 
 const props = defineProps({
+    id: {
+        type: Number,
+        required: true,
+    },
     image: {
         type: String,
         required: true,
@@ -82,9 +86,15 @@ const props = defineProps({
     },
 });
 
+const emit = defineEmits(['view-detail']);
+
 const isFavorite = ref(props.favorite);
 
 const toggleFavorite = () => {
     isFavorite.value = !isFavorite.value;
+};
+
+const viewDetail = () => {
+    emit('view-detail', props.id);
 };
 </script>
