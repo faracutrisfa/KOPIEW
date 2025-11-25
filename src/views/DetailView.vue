@@ -41,15 +41,24 @@ onMounted(async () => {
         if(getToken()) {
             profileData.value = await getProfile();
         }
+        try {
+            placeData.value = await placeDetail(props.id);
+        } catch (err) {
+            if (err.response && err.response.status === 404) {
+                console.log("Tempat tidak ditemukan");
+                window.history.back();
+                return;
+            } else {
+                throw err;
+            }
+        }
         placeGallery.value = await getGallery(props.id);
         placeData.value = await placeDetail(props.id);
         placeReviewsData.value = await placeReviews(props.id);
         placeRating.value = await getRating(props.id);
     } catch (error) {
-        if (error.response && error.response.status === 404) {
-            console.log("Data tidak ditemukan");
-            window.history.back();
-        }
+        console.log("Terjadi kesalahan: saat melakukan get data");
+        console.error(error);
     }
 });
 
