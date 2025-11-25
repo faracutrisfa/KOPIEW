@@ -7,7 +7,7 @@ import TentangView from "../views/TentangView.vue";
 import LoginView from "../views/LoginView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import DesignSystemView from "../views/DesignSystemView.vue";
-import DetailView from "../views/Detail/DetailView.vue";
+import DetailView from "../views/DetailView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
