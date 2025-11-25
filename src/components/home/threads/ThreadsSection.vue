@@ -15,8 +15,13 @@
             </div>
 
             <div ref="contentRef" :class="['scroll-animate-fade', { 'is-visible': isContentVisible }]">
+                <!-- Loading State -->
+                <div v-if="loading" class="flex justify-center py-8">
+                    <div class="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+                </div>
+
                 <!-- Empty State -->
-                <div v-if="!trendingItems || trendingItems.length === 0"
+                <div v-else-if="!threads || threads.length === 0"
                     class="flex flex-col items-center justify-center py-12 text-center">
                     <div class="mb-4 text-6xl opacity-30">📝</div>
                     <h3 class="mb-2 text-lg font-semibold text-text-strong">Belum ada threads</h3>
@@ -26,9 +31,13 @@
                 <!-- Threads List -->
                 <div v-else class="overflow-x-auto pb-4">
                     <div class="flex gap-4" style="min-width: min-content">
-                        <ThreadCard v-for="thread in trendingItems" :key="thread.id" :profileImage="thread.profileImage"
-                            :profileName="thread.profileName" :timestamp="thread.timestamp" :image="thread.image"
-                            :name="thread.name" :favorite="thread.favorite" :bookmarked="thread.bookmarked" />
+                        <ThreadCard v-for="thread in threads" :key="thread.id"
+                            :profileImage="thread.user?.avatar || thread.userAvatar || thread.profileImage || '/logo.webp'"
+                            :profileName="thread.user?.name || thread.userName || thread.profileName || 'User'"
+                            :timestamp="thread.created_at || thread.timestamp" :image="thread.image"
+                            :name="thread.cafe?.name || thread.cafeName || thread.name || 'Thread'"
+                            :favorite="thread.is_liked || thread.favorite || false"
+                            :bookmarked="thread.bookmarked || false" />
                     </div>
                 </div>
             </div>
@@ -37,13 +46,21 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import ThreadCard from "../../ThreadCard.vue";
-import { trendingThreads } from "../../../data/trending/dataTrending.js";
 import { useScrollAnimation } from "../../../composables/useScrollAnimation";
+import { useThreads } from "../../../composables/useThreads";
 
-const trendingItems = ref(trendingThreads);
+const { threads, loading, error, fetchThreads } = useThreads();
 
 const { elementRef: headerRef, isVisible: isHeaderVisible } = useScrollAnimation({ threshold: 0.2 });
 const { elementRef: contentRef, isVisible: isContentVisible } = useScrollAnimation({ threshold: 0.1 });
+
+onMounted(async () => {
+    try {
+        await fetchThreads({ limit: 5 });
+    } catch (err) {
+        console.error("Failed to load threads:", err);
+    }
+});
 </script>

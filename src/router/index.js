@@ -20,6 +20,10 @@ const router = createRouter({
     { path: "/login", name: "login", component: LoginView },
     { path: "/register", name: "register", component: RegisterView },
     { path: "/design-system", name: "design-system", component: DesignSystemView },
+    
+    { path: "/threads", name: "threads", component: () => import("../views/ThreadsView.vue"),},
+    { path: "/threads/:id", name: "thread-detail", component: () => import("../views/ThreadDetailView.vue"),
+    },
     { path: "/place/detail/:id", name: "detail", component: DetailView, props: true },
     { path: "/wishlist", name: "wishlist", component: WishlistView, meta: { requiresAuth: true } },
   ],
