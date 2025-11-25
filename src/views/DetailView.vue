@@ -7,6 +7,7 @@ import normalizeImageUrl, { getToken } from "../helper/Helper";
 import ImagePreview from "../components/detailPlace/ImagePreview.vue";
 import BaseButton from "../components/BaseButton.vue";
 import GalleryUploader from "../components/detailPlace/GalleryUploader.vue";
+import SkeletonLoad from "../components/detailPlace/SkeletonLoad.vue";
 
 const props = defineProps({
   id: {
@@ -117,9 +118,10 @@ const deleteReview = async (id) => {
 
 <template>
     <div class="min-h-screen px-6 py-10">
-        <div v-if="!placeData">
-            Loading...
+        <div v-if="!placeData && !placeRating && !placeReviewsData && !placeGallery">
+            <SkeletonLoad />
         </div>
+
         <div v-if="placeData" class="flex gap-6 h-full">
             <div class="sticky top-3 self-start flex flex-col gap-4">
                 <div class="flex flex-col">
@@ -154,9 +156,9 @@ const deleteReview = async (id) => {
                 <div class="flex items-center gap-3">
                     <h2 v-if="placeData" class="text-2xl font-semibold">{{ placeData.data.data.name }}</h2>
     
-                    <div class="bg-primary-40 px-3 py-1 rounded text-white text-lg">
+                    <!-- <div class="bg-primary-40 px-3 py-1 rounded text-white text-lg">
                         24 Jam
-                    </div>
+                    </div> -->
                 </div>
     
                 <div class="flex gap-2 pb-2 items-center my-3">
