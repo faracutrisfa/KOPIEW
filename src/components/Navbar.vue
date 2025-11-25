@@ -9,7 +9,7 @@ const isOpen = ref(false);
 const NAV_LINKS = [
   { name: "home", label: "Home" },
   { name: "fitur", label: "Fitur" },
-  { name: "rekomendasi", label: "Rekomendasi" },
+  { name: "tempat", label: "Tempat" },
   { name: "tentang", label: "Tentang" },
 ];
 
