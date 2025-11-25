@@ -81,7 +81,7 @@
               :description="place.description"
               :image="getPlaceImage(place)"
               :rating="calculateAverageRating(place.reviews)"
-              :duration="formatDuration(place.created_at)"
+              :duration="place.operating_hours"
               @view-detail="handleViewDetail"
             />
           </div>
@@ -179,19 +179,6 @@ const calculateAverageRating = (reviews) => {
   if (!reviews || reviews.length === 0) return 0;
   const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
   return Math.round((sum / reviews.length) * 10) / 10;
-};
-
-const formatDuration = (createdAt) => {
-  const now = new Date();
-  const created = new Date(createdAt);
-  const diffTime = Math.abs(now - created);
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-  if (diffDays < 1) return "Hari ini";
-  if (diffDays === 1) return "1 hari";
-  if (diffDays < 7) return `${diffDays} hari`;
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} minggu`;
-  return `${Math.floor(diffDays / 30)} bulan`;
 };
 
 const fetchPlaces = async () => {
