@@ -1,13 +1,13 @@
 const API_URL = "http://127.0.0.1:8000";
 
 export default function normalizeImageUrl(url) {
-    if (url && (url.startsWith("http://") || url.startsWith("https://"))) {
-        return url;
-    }
+  if (url && (url.startsWith("http://") || url.startsWith("https://"))) {
+    return url;
+  }
 
-    if (url && url.startsWith("/storage")) {
-        return `${API_URL}${url}`;
-    }
+  if (url && url.startsWith("/storage")) {
+    return `${API_URL}${url}`;
+  }
 
     if (url && url.startsWith("photos")) {
         return `${API_URL}/storage/${url}`;
@@ -17,5 +17,5 @@ export default function normalizeImageUrl(url) {
 }
 
 export function getToken() {
-    return localStorage.getItem("token") || null;
+  return localStorage.getItem("token") || null;
 }

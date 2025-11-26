@@ -22,6 +22,7 @@
   --color-text-body: #38251d;
   --color-text-disabled: #6f6258;
   --color-text-white: #d9d9d9;
+  --color-text-grey: #aeaeae;
 
   --shadow-soft: 0px 4px 20px rgba(0, 0, 0, 0.12);
 
@@ -38,7 +39,7 @@ body {
   font-family: var(--font-sans);
 
   margin: 0 auto;
-  max-width: 1280px; 
+  max-width: 1280px;
 }
 
 @media (min-width: 640px) {
@@ -61,7 +62,7 @@ body {
 
 @media (min-width: 1280px) {
   body {
-    max-width: 1280px; 
+    max-width: 1280px;
   }
 }
 

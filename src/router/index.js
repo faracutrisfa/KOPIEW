@@ -7,6 +7,7 @@ import TentangView from "../views/TentangView.vue";
 import LoginView from "../views/LoginView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import DesignSystemView from "../views/DesignSystemView.vue";
+import ProfileView from "../views/ProfileView.vue";
 import DetailView from "../views/DetailView.vue";
 import WishlistView from "../views/WishlistView.vue";
 import AddPlaceView from "../views/AddPlaceView.vue";
@@ -21,13 +22,39 @@ const router = createRouter({
     { path: "/tentang", name: "tentang", component: TentangView },
     { path: "/login", name: "login", component: LoginView },
     { path: "/register", name: "register", component: RegisterView },
-    { path: "/design-system", name: "design-system", component: DesignSystemView },
-    
-    { path: "/threads", name: "threads", component: () => import("../views/ThreadsView.vue"),},
-    { path: "/threads/:id", name: "thread-detail", component: () => import("../views/ThreadDetailView.vue"),
+    {
+      path: "/design-system",
+      name: "design-system",
+      component: DesignSystemView,
     },
-    { path: "/place/detail/:id", name: "detail", component: DetailView, props: true },
-    { path: "/wishlist", name: "wishlist", component: WishlistView, meta: { requiresAuth: true } },
+    {
+      path: "/threads",
+      name: "threads",
+      component: () => import("../views/ThreadsView.vue"),
+    },
+    {
+      path: "/threads/:id",
+      name: "thread-detail",
+      component: () => import("../views/ThreadDetailView.vue"),
+    },
+    {
+      path: "/place/detail/:id",
+      name: "detail",
+      component: DetailView,
+      props: true,
+    },
+    {
+      path: "/wishlist",
+      name: "wishlist",
+      component: WishlistView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: "/profile",
+      name: "profile",
+      component: ProfileView,
+      meta: { requiresAuth: true },
+    },
   ],
   scrollBehavior() {
     return { top: 0 };
@@ -35,12 +62,12 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-    const loggedIn = localStorage.getItem('token'); 
-    if (to.meta.requiresAuth && !loggedIn) {
-        next({ name: 'login' });
-    } else {
-        next();
-    }
+  const loggedIn = localStorage.getItem("token");
+  if (to.meta.requiresAuth && !loggedIn) {
+    next({ name: "login" });
+  } else {
+    next();
+  }
 });
 
 export default router;
