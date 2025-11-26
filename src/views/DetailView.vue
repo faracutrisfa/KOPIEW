@@ -132,10 +132,12 @@ const deleteImage = async (id) => {
                 placeGallery.value = []; 
                 return;
             }
+            
             console.warn("Galeri gagal di-refresh", err);
+        } finally {
+            isDeletingImg.value = false;
         }
         showSuccess("Gambar berhasil dihapus");
-        isDeletingImg.value = false;
     } catch (error) {
         showError("Gagal menghapus gambar");
         console.error(error);
@@ -171,7 +173,6 @@ const deleteReview = async (id) => {
 
         isDeletingReview.value = true;
         await reviewDelete(props.id, id);
-        isDeletingReview.value = false;
 
         try {
             placeReviewsData.value = await placeReviews(props.id);
@@ -181,7 +182,9 @@ const deleteReview = async (id) => {
                 placeReviewsData.value = []; 
                 return;
             }
-        } 
+        }  finally {
+            isDeletingReview.value = false;
+        }
         showSuccess("Review berhasil dihapus");
     } catch (error) {
         showError("Gagal menghapus review");
