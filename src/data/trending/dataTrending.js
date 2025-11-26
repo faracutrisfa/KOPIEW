@@ -6,7 +6,7 @@ export const trendingThreads = [
     timestamp: "2 hours ago",
     image: "/logo.webp",
     name: "Trending Cafe 1",
-    favorite: true,
+    favorite: false,
     bookmarked: false,
   },
   {
@@ -26,7 +26,7 @@ export const trendingThreads = [
     timestamp: "5 hours ago",
     image: "/logo.webp",
     name: "Trending Cafe 3",
-    favorite: true,
+    favorite: false,
     bookmarked: false,
   },
   {
@@ -46,7 +46,7 @@ export const trendingThreads = [
     timestamp: "2 days ago",
     image: "/logo.webp",
     name: "Trending Cafe 5",
-    favorite: true,
+    favorite: false,
     bookmarked: true,
   },
 ];

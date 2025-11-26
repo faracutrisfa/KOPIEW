@@ -4,7 +4,6 @@
             <div v-if="modelValue" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
                 @click.self="closeModal">
                 <div class="w-full max-w-2xl rounded-xl bg-white shadow-2xl" @click.stop>
-                    <!-- Header -->
                     <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
                         <h2 class="text-2xl font-bold text-text-strong">Buat Thread Baru</h2>
                         <button @click="closeModal" class="text-gray-400 transition-colors hover:text-gray-600"
@@ -16,9 +15,7 @@
                         </button>
                     </div>
 
-                    <!-- Body -->
                     <div class="max-h-[70vh] overflow-y-auto p-6">
-                        <!-- Description Textarea -->
                         <div class="mb-4">
                             <label class="mb-2 block text-sm font-medium text-text-strong">
                                 Deskripsi <span class="text-red-500">*</span>
@@ -33,7 +30,6 @@
                             </div>
                         </div>
 
-                        <!-- Image Upload -->
                         <div class="mb-4">
                             <label class="mb-2 block text-sm font-medium text-text-strong">
                                 Gambar (Opsional)
@@ -51,7 +47,6 @@
                                 </BaseButton>
                                 <span v-if="imagePreview" class="text-sm text-text-body">Gambar dipilih</span>
                             </div>
-                            <!-- Image Preview -->
                             <div v-if="imagePreview" class="relative mt-3">
                                 <img :src="imagePreview" alt="Preview" class="h-48 w-full rounded-lg object-cover" />
                                 <button @click="removeImage"
@@ -64,8 +59,6 @@
                                 </button>
                             </div>
                         </div>
-
-                        <!-- Cafe Selector -->
                         <div class="mb-4">
                             <label class="mb-2 block text-sm font-medium text-text-strong">
                                 Lokasi Cafe (Opsional)
@@ -80,7 +73,6 @@
                         </div>
                     </div>
 
-                    <!-- Footer -->
                     <div class="flex items-center justify-end gap-3 border-t border-gray-200 px-6 py-4">
                         <BaseButton @click="closeModal" variant="outline">
                             Batal
@@ -162,18 +154,15 @@ const handleSubmit = () => {
     isSubmitting.value = true;
 
     const threadData = {
-        description: description.value,
-        image: imagePreview.value,
-        cafeId: selectedCafe.value?.id || null,
-        cafeName: selectedCafe.value?.name || null,
+        content: description.value,
+        image: imageFile.value,
+        cafe_id: selectedCafe.value?.id || null,
     };
 
-    setTimeout(() => {
-        emit('submit', threadData);
-        resetForm();
-        closeModal();
-        isSubmitting.value = false;
-    }, 500);
+    emit('submit', threadData);
+    resetForm();
+    closeModal();
+    isSubmitting.value = false;
 };
 
 const resetForm = () => {
