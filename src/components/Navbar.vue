@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import BaseButton from "../components/BaseButton.vue";
 import { useAuthStore } from "../stores/auth";
+import normalizeImageUrl from "../helper/Helper";
 
 const route = useRoute();
 const router = useRouter();
@@ -97,7 +98,7 @@ const openProfile = () => {
           <div class="relative">
             <button @click="showProfileDropdown = !showProfileDropdown"
               class="flex items-center gap-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/20">
-              <img :src="authStore.currentUser?.avatar || '/logo.webp'" :alt="authStore.currentUser?.name || 'User'"
+              <img :src="normalizeImageUrl(authStore.currentUser?.profile_photo) || '/logo.webp'" :alt="authStore.currentUser?.name || 'User'"
                 class="h-10 w-10 rounded-full object-cover border-2 border-gray-200" />
             </button>
 
