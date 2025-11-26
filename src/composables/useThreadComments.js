@@ -28,16 +28,31 @@ export function useThreadComments(threadId) {
 
     try {
       const response = await getThreadComments(threadId, params);
-      comments.value = response.data.data || response.data;
+      console.log("Comments response:", response.data);
 
-      if (response.data.meta) {
-        pagination.value = {
-          currentPage: response.data.meta.current_page,
-          totalPages: response.data.meta.last_page,
-          perPage: response.data.meta.per_page,
-          total: response.data.meta.total,
-        };
+      // Laravel might return: { status, message, data: [...comments] }
+      // Or with pagination: { status, message, data: { data: [...], meta: {...} } }
+      const responseData = response.data.data || response.data;
+
+      if (Array.isArray(responseData)) {
+        comments.value = responseData;
+      } else if (responseData.data && Array.isArray(responseData.data)) {
+        // Paginated response
+        comments.value = responseData.data;
+
+        if (responseData.current_page) {
+          pagination.value = {
+            currentPage: responseData.current_page,
+            totalPages: responseData.last_page,
+            perPage: responseData.per_page,
+            total: responseData.total,
+          };
+        }
+      } else {
+        comments.value = [];
       }
+
+      console.log("Comments loaded:", comments.value);
 
       return response.data;
     } catch (err) {
@@ -59,9 +74,14 @@ export function useThreadComments(threadId) {
     error.value = null;
 
     try {
+      console.log("Adding comment:", commentData);
       const response = await addThreadComment(threadId, commentData);
-      const newComment = response.data.data || response.data;
+      console.log("Add comment response:", response.data);
 
+      const newComment = response.data.data || response.data;
+      console.log("New comment:", newComment);
+
+      // Add to comments array
       comments.value.push(newComment);
 
       return newComment;

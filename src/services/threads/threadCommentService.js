@@ -4,7 +4,9 @@ export const getThreadComments = (threadId, params = {}) => {
   return apiClient.get(`/threads/${threadId}/comments`, { params });
 };
 export const addThreadComment = (threadId, commentData) => {
-  return apiClient.post(`/threads/${threadId}/comments`, commentData);
+  return apiClient.post(`/threads/${threadId}/comments`, {
+    comment: commentData.comment || commentData.content,
+  });
 };
 
 export const updateThreadComment = (threadId, commentId, commentData) => {
