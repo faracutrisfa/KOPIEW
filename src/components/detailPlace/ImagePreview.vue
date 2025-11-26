@@ -59,7 +59,7 @@ const centerThumbnail = (index) => {
 <template>
     <div class="flex flex-col">
         <div
-            class="relative w-[40vw] h-[80vh] rounded-xl overflow-hidden 
+            class="relative w-full w-[40vw]/2 h-[80vh]/2 lg:h-[80vh] rounded-xl overflow-hidden 
                 bg-gradient-to-br from-indigo-200 via-pink-200 to-yellow-200 flex items-center justify-center"
         >
             <div
@@ -105,13 +105,13 @@ const centerThumbnail = (index) => {
 
         <div
             ref="thumbContainer"
-            class="flex gap-2 items-center mt-3 max-w-[40vw] mx-auto 
+            class="flex gap-2 items-center mt-3 w-full mx-auto 
                 overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent"
         >
             <div
                 v-for="(thumb, index) in props.thumbs"
                 :key="index"
-                class="w-30 h-25 rounded-lg overflow-hidden cursor-pointer border-3 flex-shrink-0"
+                class="w-[150px] h-[120px] rounded-lg overflow-hidden cursor-pointer border-3 flex-shrink-0"
                 :class="image === thumb ? 'border-primary' : 'border-transparent'"
                 @click="selectThumb(index)"
             >

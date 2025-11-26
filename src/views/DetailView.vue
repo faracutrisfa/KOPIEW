@@ -9,7 +9,10 @@ import BaseButton from "../components/BaseButton.vue";
 import GalleryUploader from "../components/detailPlace/GalleryUploader.vue";
 import SkeletonLoad from "../components/detailPlace/SkeletonLoad.vue";
 import { useRouter } from "vue-router";
+import { useToast } from "../composables/useToast";
 
+
+const { showSuccess, showError, showInfo } = useToast();
 const props = defineProps({
   id: {
     type: String,
@@ -49,6 +52,7 @@ onMounted(async () => {
             placeData.value = await placeDetail(props.id);
         } catch (err) {
             if (err.response && err.response.status === 404) {
+                showError("Data tempat tidak ditemukan");
                 console.log("Tempat tidak ditemukan");
                 router.back();
                 return;
@@ -78,6 +82,7 @@ onMounted(async () => {
         }
 
     } catch (error) {
+        showError("Gagal memuat data, silahkan coba beberapa saat lagi.");
         console.log("Terjadi kesalahan saat mengambil data:");
         console.error(error);
     }
@@ -94,11 +99,11 @@ const handleUpload = async (formData) => {
     try {
         await uploadGalleryImage(props.id, formData); 
         placeGallery.value = await getGallery(props.id);
-        alert("Gambar berhasil diupload");
         galleryUploader.value?.clearInput();
         showUpload.value = false;
+        showSuccess('Gambar berhasil diupload');
     } catch (err) {
-        alert("Gagal mengupload gambar");
+        showError('Gagal mengupload gambar');
         console.error(err);
     }
 };
@@ -109,7 +114,6 @@ const deleteImage = async (id) => {
 
     try {
         await deleteGalleryImage(props.id, id);
-        alert("Gambar berhasil dihapus");
 
         try {
             placeGallery.value = await getGallery(props.id);
@@ -120,15 +124,17 @@ const deleteImage = async (id) => {
             }
             console.warn("Galeri gagal di-refresh", err);
         }
+        showSuccess("Gambar berhasil dihapus");
 
     } catch (error) {
-        alert("Gagal menghapus gambar");
+        showError("Gagal menghapus gambar");
         console.error(error);
     }
 };
 
 const submitReview = async () => {
-  if (!newReview.value.trim()) return alert("Review tidak boleh kosong");
+  if (!newReview.value.trim()) return showError("Review tidak boleh kosong");
+  if (!selectedRating.value) return showError("Rating tidak boleh kosong");
 
   try {
     await uploadReview(props.id, { content: newReview.value, rating: selectedRating.value }); 
@@ -137,10 +143,10 @@ const submitReview = async () => {
     newReview.value = "";
     selectedRating.value = 0;
     showReviewInput.value = false;
-    alert("Review berhasil dikirim");
+    showSuccess("Review berhasil dikirim");
   } catch (err) {
     console.error(err);
-    alert("Gagal mengirim review");
+    showError("Gagal mengirim review");
   }
 };
 
@@ -160,9 +166,9 @@ const deleteReview = async (id) => {
                 return;
             }
         }
-        alert("Review berhasil dihapus");
+        showSuccess("Review berhasil dihapus");
     } catch (error) {
-        alert("Gagal menghapus review");
+        showError("Gagal menghapus review");
         console.error(error);   
     }
 };
@@ -174,15 +180,15 @@ const deleteReview = async (id) => {
             <SkeletonLoad />
         </div>
 
-        <div v-if="placeData" class="flex gap-6 h-full">
-            <div class="sticky top-3 self-start flex flex-col gap-4">
+        <div v-if="placeData" class="flex flex-col lg:flex-row gap-6 h-full">
+            <div class="lg:sticky lg:max-w-[45vw] top-3 self-start w-full flex flex-1 flex-col gap-4">
                 <div class="flex flex-col">
                     <ImagePreview :thumbs="thumbs" />
                 </div>
     
                 <div class="flex w-full gap-10 bg-primary/80 px-4 py-5 rounded-lg text-white items-center">             
                     <div class="flex gap-2">
-                        <h1 class="font-bold text-6xl">
+                        <h1 class="font-bold text-5xl lg:text-6xl">
                             {{
                                 placeRating?.total_reviewer > 0 &&
                                 placeRating?.total_bintang != null
@@ -302,7 +308,7 @@ const deleteReview = async (id) => {
                     />
                 </div>
                 <div class="flex justify-between items-center mb-3">
-                    <h4 class="font-bold mt-3 mb-2">Galery</h4>
+                    <h4 class="font-bold mt-3 mb-2">Gallery</h4>
                     <BaseButton :full="false" size="sm" v-if="getToken()" @click="showUpload = !showUpload"> Tambah </BaseButton>
                 </div>
 
@@ -321,7 +327,7 @@ const deleteReview = async (id) => {
                         class="col-span-4 text-center"
                         v-if="!placeGallery?.data?.data"
                     >
-                        Tidak memiliki galery
+                        Tidak memiliki photos
                     </p>
 
                     <div

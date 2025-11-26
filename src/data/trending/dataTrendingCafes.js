@@ -8,7 +8,7 @@ export const trendingCafes = [
     rating: 5,
     description:
       "Cafe hits yang lagi viral di Malang, perfect untuk foto-foto aesthetic.",
-    favorite: true,
+    favorite: false,
   },
   {
     id: 2,
@@ -30,7 +30,7 @@ export const trendingCafes = [
     rating: 4,
     description:
       "Cafe hits yang lagi viral di Malang, perfect untuk foto-foto aesthetic.",
-    favorite: true,
+    favorite: false,
   },
   {
     id: 4,
