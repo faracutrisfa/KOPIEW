@@ -1,24 +1,58 @@
 <script setup>
-import { ref, computed } from "vue";
-import { useRoute } from "vue-router";
+import { ref, computed, onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import BaseButton from "../components/BaseButton.vue";
+import { useAuthStore } from "../stores/auth";
 
 const route = useRoute();
+const router = useRouter();
+const authStore = useAuthStore();
+
 const isOpen = ref(false);
+const showProfileDropdown = ref(false);
 
 const NAV_LINKS = [
   { name: "home", label: "Home" },
   { name: "fitur", label: "Fitur" },
-  { name: "rekomendasi", label: "Rekomendasi" },
+  { name: "tempat", label: "Tempat" },
   { name: "tentang", label: "Tentang" },
 ];
 
+const isUserLoggedIn = computed(() => {
+  return !!localStorage.getItem("token");
+});
+
+const LOGGED_IN_NAV_LINKS = computed(() => {
+  return [
+    { name: "home", label: "Beranda" },
+    { name: "fitur", label: "Fitur" },
+    { name: "tempat", label: "Tempat" },
+    { name: "wishlist", label: "Wishlist" },
+    { name: "tentang", label: "Tentang" },
+  ];
+});
+
 const activeRouteName = computed(() => route.name);
 const isActive = (name) => activeRouteName.value === name;
+
+onMounted(() => {
+  authStore.checkAuth();
+});
+
+const handleLogout = () => {
+  authStore.logout();
+  showProfileDropdown.value = false;
+  router.push({ name: "home" });
+};
+
+const openProfile = () => {
+  showProfileDropdown.value = false;
+  router.push({ name: "profile" });
+};
 </script>
 
 <template>
-  <header class="sticky top-0 z-30 bg-bg-main">
+  <header class="sticky top-0 z-30 bg-bg-main relative">
     <div class="mx-auto flex items-center py-4 md:py-6">
       <RouterLink to="/" class="flex items-center gap-2">
         <img src="/logo.webp" alt="logo" class="w-32" />
@@ -43,13 +77,88 @@ const isActive = (name) => activeRouteName.value === name;
       </nav>
 
       <div class="hidden items-center gap-3 md:flex">
-        <RouterLink :to="{ name: 'login' }">
-          <BaseButton full="false">Masuk</BaseButton>
-        </RouterLink>
+        <template v-if="!authStore.isAuthenticated">
+          <RouterLink :to="{ name: 'login' }">
+            <BaseButton full="false">Masuk</BaseButton>
+          </RouterLink>
 
-        <RouterLink :to="{ name: 'register' }">
-          <BaseButton full="false" variant="outline">Daftar</BaseButton>
-        </RouterLink>
+          <RouterLink :to="{ name: 'register' }">
+            <BaseButton full="false" variant="outline">Daftar</BaseButton>
+          </RouterLink>
+        </template>
+
+        <template v-else>
+          <div class="relative">
+            <input
+              type="text"
+              placeholder="cari sesuatu"
+              class="w-64 rounded-lg border border-gray-300 px-4 py-2 text-sm text-text-body placeholder-gray-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            />
+            <svg
+              class="absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </div>
+
+          <button class="text-text-body hover:text-primary transition-colors">
+            <svg
+              class="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+              />
+            </svg>
+          </button>
+
+          <div class="relative">
+            <button
+              @click="showProfileDropdown = !showProfileDropdown"
+              class="flex items-center gap-2 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/20"
+            >
+              <img
+                :src="authStore.currentUser?.avatar || '/logo.webp'"
+                :alt="authStore.currentUser?.name || 'User'"
+                class="h-10 w-10 rounded-full object-cover border-2 border-gray-200"
+              />
+            </button>
+
+            <div
+              v-if="showProfileDropdown"
+              @click.stop
+              class="absolute right-0 mt-2 w-48 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5"
+            >
+              <div class="py-1">
+                <button
+                  @click="openProfile"
+                  class="block w-full px-4 py-2 text-left text-sm text-text-body hover:bg-gray-100"
+                >
+                  Profile
+                </button>
+                <button
+                  @click="handleLogout"
+                  class="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100"
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
+          </div>
+        </template>
       </div>
 
       <button
@@ -64,8 +173,10 @@ const isActive = (name) => activeRouteName.value === name;
       </button>
     </div>
 
-    <!-- Mobile menu -->
-    <div v-if="isOpen" class="border-t border-gray-100 bg-bg-main md:hidden">
+    <div
+      v-if="isOpen"
+      class="absolute top-full left-0 right-0 border-t border-gray-100 bg-bg-main shadow-lg md:hidden z-40"
+    >
       <nav
         class="mx-auto flex flex-col gap-1 px-6 py-3 text-sm font-semibold text-text-body"
       >
@@ -85,13 +196,31 @@ const isActive = (name) => activeRouteName.value === name;
         </RouterLink>
 
         <div class="mt-3 flex flex-col gap-2">
-          <RouterLink :to="{ name: 'login' }" @click="isOpen = false">
-            <BaseButton size="sm">Masuk</BaseButton>
-          </RouterLink>
+          <template v-if="!authStore.isAuthenticated">
+            <RouterLink :to="{ name: 'login' }" @click="isOpen = false">
+              <BaseButton size="sm">Masuk</BaseButton>
+            </RouterLink>
 
-          <RouterLink :to="{ name: 'register' }" @click="isOpen = false">
-            <BaseButton size="sm" variant="outline">Daftar</BaseButton>
-          </RouterLink>
+            <RouterLink :to="{ name: 'register' }" @click="isOpen = false">
+              <BaseButton size="sm" variant="outline">Daftar</BaseButton>
+            </RouterLink>
+          </template>
+
+          <template v-else>
+            <button @click="isOpen = false">
+              <BaseButton size="sm" variant="outline">Profile</BaseButton>
+            </button>
+
+            <button @click="handleLogout">
+              <BaseButton
+                size="sm"
+                variant="outline"
+                class="w-full text-red-600"
+              >
+                Logout
+              </BaseButton>
+            </button>
+          </template>
         </div>
       </nav>
     </div>
