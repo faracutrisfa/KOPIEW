@@ -4,6 +4,10 @@ import BaseButton from "../BaseButton.vue";
 
 const emit = defineEmits(['uploaded','close']);
 
+const props = defineProps({
+  isProcessingImg: Boolean
+});
+
 const isDragging = ref(false);
 const previewImage = ref(null);
 const selectedFile = ref(null);
@@ -120,7 +124,7 @@ defineExpose({
             <img :src="previewImage" class="w-full h-full object-cover" />
         </div>
 
-        <BaseButton size="sm" class="mt-3" @click="submitUpload">
+        <BaseButton :disabled="props.isProcessingImg"  size="sm" class="mt-3" @click="submitUpload">
             Upload
         </BaseButton>
     </div>
