@@ -42,6 +42,12 @@ const showUpload = ref(false);
 const router = useRouter();
 const galleryUploader = ref(null);
 
+const isProcessingReview = ref(false);
+const isDeletingReview = ref(false);
+
+const isProcessingImg = ref(false);
+const isDeletingImg = ref(false);
+
 onMounted(async () => {
     try {
         if (getToken()) {
@@ -97,14 +103,17 @@ const hasUserReviewed = computed(() => {
 
 const handleUpload = async (formData) => {
     try {
+        isProcessingImg.value = true;
         await uploadGalleryImage(props.id, formData); 
         placeGallery.value = await getGallery(props.id);
         galleryUploader.value?.clearInput();
         showUpload.value = false;
         showSuccess('Gambar berhasil diupload');
+        isProcessingImg.value = false;
     } catch (err) {
         showError('Gagal mengupload gambar');
         console.error(err);
+        isProcessingImg.value = false;
     }
 };
 
@@ -113,6 +122,7 @@ const deleteImage = async (id) => {
     if (!ok) return;
 
     try {
+        isDeletingImg.value = true;
         await deleteGalleryImage(props.id, id);
 
         try {
@@ -122,13 +132,16 @@ const deleteImage = async (id) => {
                 placeGallery.value = []; 
                 return;
             }
+            
             console.warn("Galeri gagal di-refresh", err);
+        } finally {
+            isDeletingImg.value = false;
         }
         showSuccess("Gambar berhasil dihapus");
-
     } catch (error) {
         showError("Gagal menghapus gambar");
         console.error(error);
+        isDeletingImg.value = false;
     }
 };
 
@@ -137,6 +150,7 @@ const submitReview = async () => {
   if (!selectedRating.value) return showError("Rating tidak boleh kosong");
 
   try {
+    isProcessingReview.value = true;
     await uploadReview(props.id, { content: newReview.value, rating: selectedRating.value }); 
     placeReviewsData.value = await placeReviews(props.id);
     placeRating.value = await getRating(props.id);
@@ -147,6 +161,8 @@ const submitReview = async () => {
   } catch (err) {
     console.error(err);
     showError("Gagal mengirim review");
+  } finally {
+    isProcessingReview.value = false;
   }
 };
 
@@ -155,6 +171,7 @@ const deleteReview = async (id) => {
         const confirmDelete = confirm("Apakah Anda yakin ingin menghapus review ini?");
         if (!confirmDelete) return;
 
+        isDeletingReview.value = true;
         await reviewDelete(props.id, id);
 
         try {
@@ -165,6 +182,8 @@ const deleteReview = async (id) => {
                 placeReviewsData.value = []; 
                 return;
             }
+        }  finally {
+            isDeletingReview.value = false;
         }
         showSuccess("Review berhasil dihapus");
     } catch (error) {
@@ -284,7 +303,7 @@ const deleteReview = async (id) => {
                     ></textarea>
 
                     <div class="flex justify-end mt-2">
-                        <BaseButton size="sm" @click="submitReview">Kirim</BaseButton>
+                        <BaseButton :disabled="isProcessingReview" size="sm" @click="submitReview">Kirim</BaseButton>
                     </div>
                 </div>
 
@@ -304,6 +323,7 @@ const deleteReview = async (id) => {
                         :replies="review.replies ?? []"
                         :userId="review.user_id"
                         :profileData="profileData"
+                        :isDeletingReview="isDeletingReview"
                         :click="() => deleteReview(review.id)"
                     />
                 </div>
@@ -317,6 +337,7 @@ const deleteReview = async (id) => {
                     v-if="showUpload"
                     @uploaded="handleUpload"
                     @close="showUpload = false"
+                    :isProcessingImg="isProcessingImg"
                 />
                 
                 <div
@@ -345,7 +366,11 @@ const deleteReview = async (id) => {
                         <button
                             v-if="img.user.id === profileData?.data.data.id"
                             @click="deleteImage(img.id)"
-                            class="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-tr-lg  hover:bg-red-600"
+                            :disabled="isDeletingImg"
+                            :class="[
+                                'absolute top-0 right-0 bg-red-500 text-white p-1 rounded-tr-lg  hover:bg-red-600',
+                                isDeletingImg ? 'opacity-50 cursor-not-allowed' : ''
+                            ]"
                             title="Hapus gambar"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
