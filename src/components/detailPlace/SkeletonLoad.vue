@@ -1,9 +1,9 @@
 <template>
-    <div class="flex gap-6 h-full animate-pulse">
-        <div class="sticky top-3 self-start flex flex-col gap-4">
-            <div class="flex flex-col gap-2">
-                <div class="relative w-[40vw] h-[80vh] bg-gray-300 rounded-lg"></div>
-                <div class="grid grid-cols-4 gap-2">
+    <div class="flex flex-col lg:flex-row gap-6 h-full animate-pulse">
+        <div class="top-3 w-full lg:w-[40vw] self-start flex-1 flex flex-col gap-4">
+            <div class="flex flex-col w-full gap-2">
+                <div class="relative w-full h-[80vh] bg-gray-300 rounded-lg"></div>
+                <div class="flex overflow-hidden gap-2">
                     <div class="w-full h-25 bg-gray-300 rounded"></div>
                     <div class="w-full h-25 bg-gray-300 rounded"></div>
                     <div class="w-full h-25 bg-gray-300 rounded"></div>

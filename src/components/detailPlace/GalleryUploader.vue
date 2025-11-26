@@ -95,7 +95,7 @@ defineExpose({
             @dragleave="onDragLeave"
             @drop="onDrop"
         >
-            <p class="text-sm mb-2">
+            <p class="hidden lg:block text-sm mb-2">
                 Seret & lepaskan gambar ke sini<br />
                 atau klik untuk memilih file
             </p>
