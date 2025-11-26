@@ -26,6 +26,17 @@ async function handleFileChange(event) {
   }
 }
 
+const handleWishlistRemoved = async () => {
+  try {
+    const response = await getWishlists();
+    wishlist.value = response.data.data.filter(
+      w => w.user_id === authStore.user.id
+    );
+  } catch (err) {
+    console.error("Failed to refresh wishlist:", err);
+  }
+};
+
 const profilePicture = computed(() => {
   if (!authStore.user || !authStore.user.profile_photo) {
     return '/default-avatar.png';
@@ -149,7 +160,7 @@ async function saveProfile() {
       <div class="shadow-lg min-h-64 rounded-lg p-8">
         <p class="text-3xl font-bold text-text-disabled mb-10">Eksplorasimu.</p>
         <div class="grid grid-cols-2 gap-16 p-8 overflow-y-auto max-h-120">
-          <CafeCard v-for="wish in wishlist" :key="wish.id" :image="wish.image" :name="wish.name" :duration="wish.duration" :location="wish.location" :rating="wish.rating" :description="wish.description" :favorite="wish.favorite"> </CafeCard>
+          <CafeCard v-for="wish in wishlist" :key="wish.id" :image="wish.image" :name="wish.place.name" :duration="wish.duration" :location="wish.location" :rating="wish.rating" :description="wish.description" :favorite="true" :initial-wishlist-id="wish.id" @removed="handleWishlistRemoved"> </CafeCard>
         </div>
       </div>
     </div>
