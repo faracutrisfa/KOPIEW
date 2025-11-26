@@ -1,15 +1,13 @@
-import axios from "axios";
+import { apiClient } from "./api";
 
-const API_URL = "http://localhost:8000/api";
+export const place = () => apiClient.get(`/place`);
 
-export const place = () => axios.get(`${API_URL}/place`);
+export const placeDetail = (id) => apiClient.get(`/place/${id}`);
 
-export const placeDetail = (id) => axios.get(`${API_URL}/place/${id}`);
-
-export const placeReviews = (id) => axios.get(`${API_URL}/place/${id}/reviews`);
+export const placeReviews = (id) => apiClient.get(`/place/${id}/reviews`);
 
 export const uploadReview = (id, reviewData) => {
-    return axios.post(`${API_URL}/place/${id}/reviews`, reviewData, {
+    return apiClient.post(`/place/${id}/reviews`, reviewData, {
         headers: {
             'Content-Type': 'multipart/form-data',
             'Accept': 'application/json',
@@ -19,7 +17,7 @@ export const uploadReview = (id, reviewData) => {
 }
 
 export const reviewDelete = (id, reviewId) => {
-    return axios.delete(`${API_URL}/place/${id}/reviews/${reviewId}`, {
+    return apiClient.delete(`/place/${id}/reviews/${reviewId}`, {
         headers: {
             'Accept': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -27,10 +25,10 @@ export const reviewDelete = (id, reviewId) => {
     });
 }
 
-export const getGallery = (id) => axios.get(`${API_URL}/place/${id}/photos`);
+export const getGallery = (id) => apiClient.get(`/place/${id}/photos`);
 
 export const uploadGalleryImage = (placeId, formData) => {
-    return axios.post(`${API_URL}/place/${placeId}/photos`, formData, {
+    return apiClient.post(`/place/${placeId}/photos`, formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
             'Accept': 'application/json',
@@ -40,7 +38,7 @@ export const uploadGalleryImage = (placeId, formData) => {
 }
 
 export const deleteGalleryImage = (placeId, id) => {
-    return axios.delete(`${API_URL}/place/${placeId}/photos/${id}`, {
+    return apiClient.delete(`/place/${placeId}/photos/${id}`, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
@@ -50,7 +48,7 @@ export const deleteGalleryImage = (placeId, id) => {
 }
 
 export const getProfile = () => {
-    return axios.get(`${API_URL}/profile`, {
+    return apiClient.get(`/profile`, {
         headers: { 
             'Accept': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`
