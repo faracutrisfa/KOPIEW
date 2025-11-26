@@ -23,14 +23,16 @@ export function useThreads() {
 
     try {
       const response = await getAllThreads(params);
-      threads.value = response.data.data || response.data;
 
-      if (response.data.meta) {
+      const paginatedData = response.data.data || response.data;
+      threads.value = paginatedData.data || paginatedData;
+      console.log(threads.value);
+      if (paginatedData.current_page) {
         pagination.value = {
-          currentPage: response.data.meta.current_page,
-          totalPages: response.data.meta.last_page,
-          perPage: response.data.meta.per_page,
-          total: response.data.meta.total,
+          currentPage: paginatedData.current_page,
+          totalPages: paginatedData.last_page,
+          perPage: paginatedData.per_page,
+          total: paginatedData.total,
         };
       }
 

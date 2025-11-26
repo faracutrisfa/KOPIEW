@@ -39,16 +39,9 @@
             </div>
 
             <!-- Threads Grid -->
-            <div v-else ref="gridRef" :class="['scroll-animate-fade', { 'is-visible': isGridVisible }]">
+            <div v-else>
                 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    <ThreadCard v-for="thread in threads" :key="thread.id" :id="thread.id"
-                        :profileImage="thread.user?.avatar || thread.userAvatar || '/logo.webp'"
-                        :profileName="thread.user?.name || thread.userName || 'User'"
-                        :timestamp="thread.created_at || thread.timestamp" :image="thread.image"
-                        :name="thread.cafeName || thread.cafe?.name || 'Thread'"
-                        :description="thread.content || thread.description" :favorite="thread.is_liked || false"
-                        :likes="thread.likes_count || 0" :commentCount="thread.comments_count || 0"
-                        :cafeName="thread.cafeName || thread.cafe?.name" />
+                    <ThreadCard v-for="thread in threads" :key="thread.id" :thread="thread" />
                 </div>
             </div>
         </div>
@@ -57,8 +50,7 @@
         <button v-if="hasThreads && !loading" @click="showCreateModal = true"
             class="fixed bottom-8 right-8 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white shadow-lg transition-all hover:scale-110 hover:shadow-xl"
             aria-label="Create Thread">
-            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg">
+            <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
         </button>
@@ -75,11 +67,12 @@ import BaseButton from "../components/BaseButton.vue";
 import CreateThreadModal from "../components/CreateThreadModal.vue";
 import { useScrollAnimation } from "../composables/useScrollAnimation";
 import { useThreads } from "../composables/useThreads";
+import { useToast } from "../composables/useToast";
 
-const currentUserId = ref(1);
 const showCreateModal = ref(false);
 
 const { threads, loading, error, hasThreads, fetchThreads, addThread } = useThreads();
+const { showSuccess, showError } = useToast();
 
 const { elementRef: headerRef, isVisible: isHeaderVisible } = useScrollAnimation({ threshold: 0.2 });
 const { elementRef: gridRef, isVisible: isGridVisible } = useScrollAnimation({ threshold: 0.1 });
@@ -89,6 +82,7 @@ onMounted(async () => {
         await fetchThreads();
     } catch (err) {
         console.error("Failed to load threads:", err);
+        showError("Gagal memuat threads");
     }
 });
 
@@ -96,9 +90,11 @@ const handleCreateThread = async (threadData) => {
     try {
         await addThread(threadData);
         showCreateModal.value = false;
+        showSuccess("Thread berhasil dibuat! 🎉");
     } catch (err) {
         console.error("Failed to create thread:", err);
-        alert(error.value || "Gagal membuat thread");
+        const errorMsg = err.response?.data?.message || "Gagal membuat thread";
+        showError(errorMsg);
     }
 };
 </script>
