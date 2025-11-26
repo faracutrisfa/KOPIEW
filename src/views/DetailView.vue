@@ -308,7 +308,7 @@ const deleteReview = async (id) => {
                     />
                 </div>
                 <div class="flex justify-between items-center mb-3">
-                    <h4 class="font-bold mt-3 mb-2">Galery</h4>
+                    <h4 class="font-bold mt-3 mb-2">Gallery</h4>
                     <BaseButton :full="false" size="sm" v-if="getToken()" @click="showUpload = !showUpload"> Tambah </BaseButton>
                 </div>
 
@@ -327,7 +327,7 @@ const deleteReview = async (id) => {
                         class="col-span-4 text-center"
                         v-if="!placeGallery?.data?.data"
                     >
-                        Tidak memiliki galery
+                        Tidak memiliki photos
                     </p>
 
                     <div
