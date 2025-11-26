@@ -1,6 +1,6 @@
 <template>
-    <router-link :to="`/threads/${thread.id}`"
-        class="block w-full shrink-0 rounded-lg border-2 border-gray-300 shadow-lg transition-all hover:shadow-xl hover:-translate-y-1 bg-gray-50 hover:bg-white">
+    <div @click="navigateToThread"
+        class="block w-full shrink-0 cursor-pointer rounded-lg border-2 border-gray-300 shadow-lg transition-all hover:shadow-xl hover:-translate-y-1 bg-gray-50 hover:bg-white relative">
         <div class="flex items-center justify-between gap-2 px-4 pt-4 pb-2">
             <div class="flex items-center gap-2">
                 <img :src="thread.user?.avatar || '/logo.webp'" :alt="thread.user?.name || 'User'"
@@ -10,6 +10,28 @@
                         {{ thread.user?.name || 'Unknown User' }}
                     </p>
                     <p class="text-xs text-text-body">{{ formatDate(thread.created_at) }}</p>
+                </div>
+            </div>
+
+            <div v-if="isOwner" class="relative">
+                <button @click.stop="toggleMenu"
+                    class="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+                    <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                            d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+                    </svg>
+                </button>
+
+                <div v-if="showMenu"
+                    class="absolute right-0 top-full z-10 mt-1 w-32 overflow-hidden rounded-lg border border-gray-100 bg-white shadow-lg">
+                    <button @click.stop="handleEdit"
+                        class="block w-full px-4 py-2 text-left text-sm text-text-body hover:bg-gray-50">
+                        Edit
+                    </button>
+                    <button @click.stop="handleDelete"
+                        class="block w-full px-4 py-2 text-left text-sm text-red-500 hover:bg-red-50">
+                        Delete
+                    </button>
                 </div>
             </div>
         </div>
@@ -48,13 +70,16 @@
                 📍 <span class="font-medium">{{ thread.cafe?.name || thread.cafeName }}</span>
             </p>
         </div>
-    </router-link>
+    </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
 import { toggleThreadLike } from "../services/threads/threadLikeService";
+import { deleteThread } from "../services/threads/threadService";
 import { useToast } from "../composables/useToast";
+import { useAuthStore } from "../stores/auth";
 
 const props = defineProps({
     thread: {
@@ -63,19 +88,55 @@ const props = defineProps({
     },
 });
 
-const { showError } = useToast();
+const emit = defineEmits(['delete', 'edit']);
+
+const router = useRouter();
+const { showError, showSuccess } = useToast();
+const authStore = useAuthStore();
 
 const isFavorite = ref(props.thread.is_liked || false);
 const likesCount = ref(props.thread.likes_count || 0);
 const isLiking = ref(false);
+const showMenu = ref(false);
+const isDeleting = ref(false);
+
+const isOwner = computed(() => {
+    return authStore.currentUser?.id === props.thread.user_id;
+});
+
+const navigateToThread = () => {
+    router.push(`/threads/${props.thread.id}`);
+};
+
+const toggleMenu = () => {
+    showMenu.value = !showMenu.value;
+};
+
+const handleEdit = () => {
+    showMenu.value = false;
+    emit('edit', props.thread);
+};
+
+const handleDelete = async () => {
+    if (!confirm("Apakah Anda yakin ingin menghapus thread ini?")) return;
+
+    showMenu.value = false;
+    isDeleting.value = true;
+
+    try {
+        await deleteThread(props.thread.id);
+        showSuccess("Thread berhasil dihapus");
+        emit('delete', props.thread.id);
+    } catch (err) {
+        console.error("Failed to delete thread:", err);
+        showError("Gagal menghapus thread");
+    } finally {
+        isDeleting.value = false;
+    }
+};
 
 const toggleFavorite = async () => {
     if (isLiking.value) return;
-
-    console.log('=== LIKE CLICKED ===');
-    console.log('Thread ID:', props.thread.id);
-    console.log('Current state - isFavorite:', isFavorite.value);
-    console.log('Current state - likesCount:', likesCount.value);
 
     const previousLiked = isFavorite.value;
     const previousCount = likesCount.value;
@@ -84,33 +145,19 @@ const toggleFavorite = async () => {
     likesCount.value += isFavorite.value ? 1 : -1;
     isLiking.value = true;
 
-    console.log('After optimistic update - isFavorite:', isFavorite.value);
-    console.log('After optimistic update - likesCount:', likesCount.value);
-
     try {
         const response = await toggleThreadLike(props.thread.id);
-        console.log('API Response:', response.data);
 
         if (response.data.data) {
             likesCount.value = response.data.data.likes_count;
-            console.log('Updated likesCount from server:', likesCount.value);
-
-            if (response.data.data.is_liked !== undefined) {
-                console.log('Server returned is_liked:', response.data.data.is_liked);
-            } else {
-                console.warn('⚠️ Server did NOT return is_liked field!');
-            }
         }
     } catch (err) {
         isFavorite.value = previousLiked;
         likesCount.value = previousCount;
         console.error("Failed to toggle like:", err);
-        console.log('Rolled back to - isFavorite:', isFavorite.value);
-        console.log('Rolled back to - likesCount:', likesCount.value);
         showError("Gagal menyukai thread");
     } finally {
         isLiking.value = false;
-        console.log('=== LIKE PROCESS COMPLETE ===');
     }
 };
 

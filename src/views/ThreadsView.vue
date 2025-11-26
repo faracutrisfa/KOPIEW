@@ -33,7 +33,7 @@
                 <div class="mb-6 text-8xl opacity-30">📝</div>
                 <h2 class="mb-3 text-2xl font-bold text-text-strong">Belum ada threads</h2>
                 <p class="mb-6 text-text-body">Jadilah yang pertama untuk berbagi momen kalcer!</p>
-                <BaseButton @click="showCreateModal = true" variant="primary" size="lg">
+                <BaseButton @click="openCreateModal" variant="primary" size="lg">
                     Buat Thread Pertama
                 </BaseButton>
             </div>
@@ -41,13 +41,14 @@
             <!-- Threads Grid -->
             <div v-else>
                 <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    <ThreadCard v-for="thread in threads" :key="thread.id" :thread="thread" />
+                    <ThreadCard v-for="thread in threads" :key="thread.id" :thread="thread" @delete="handleDeleteThread"
+                        @edit="handleEditThread" />
                 </div>
             </div>
         </div>
 
         <!-- Floating Create Button -->
-        <button v-if="hasThreads && !loading" @click="showCreateModal = true"
+        <button v-if="hasThreads && !loading" @click="openCreateModal"
             class="fixed bottom-8 right-8 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white shadow-lg transition-all hover:scale-110 hover:shadow-xl"
             aria-label="Create Thread">
             <svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -56,7 +57,7 @@
         </button>
 
         <!-- Create Thread Modal -->
-        <CreateThreadModal v-model="showCreateModal" @submit="handleCreateThread" />
+        <CreateThreadModal v-model="showCreateModal" :initialData="threadToEdit" @submit="handleSubmitThread" />
     </div>
 </template>
 
@@ -70,8 +71,9 @@ import { useThreads } from "../composables/useThreads";
 import { useToast } from "../composables/useToast";
 
 const showCreateModal = ref(false);
+const threadToEdit = ref(null);
 
-const { threads, loading, error, hasThreads, fetchThreads, addThread } = useThreads();
+const { threads, loading, error, hasThreads, fetchThreads, addThread, editThread } = useThreads();
 const { showSuccess, showError } = useToast();
 
 const { elementRef: headerRef, isVisible: isHeaderVisible } = useScrollAnimation({ threshold: 0.2 });
@@ -86,14 +88,38 @@ onMounted(async () => {
     }
 });
 
-const handleCreateThread = async (threadData) => {
+const openCreateModal = () => {
+    threadToEdit.value = null;
+    showCreateModal.value = true;
+};
+
+const handleEditThread = (thread) => {
+    threadToEdit.value = thread;
+    showCreateModal.value = true;
+};
+
+const handleDeleteThread = (threadId) => {
+    // ThreadCard already handled the API call
+    const index = threads.value.findIndex((t) => t.id === threadId);
+    if (index !== -1) {
+        threads.value.splice(index, 1);
+    }
+};
+
+const handleSubmitThread = async (threadData) => {
     try {
-        await addThread(threadData);
+        if (threadToEdit.value) {
+            await editThread(threadToEdit.value.id, threadData);
+            showSuccess("Thread berhasil diperbarui! 🎉");
+        } else {
+            await addThread(threadData);
+            showSuccess("Thread berhasil dibuat! 🎉");
+        }
         showCreateModal.value = false;
-        showSuccess("Thread berhasil dibuat! 🎉");
+        threadToEdit.value = null;
     } catch (err) {
-        console.error("Failed to create thread:", err);
-        const errorMsg = err.response?.data?.message || "Gagal membuat thread";
+        console.error("Failed to save thread:", err);
+        const errorMsg = err.response?.data?.message || "Gagal menyimpan thread";
         showError(errorMsg);
     }
 };
