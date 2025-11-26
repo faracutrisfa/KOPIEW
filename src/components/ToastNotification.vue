@@ -5,7 +5,6 @@
                 class="pointer-events-auto min-w-[320px] max-w-md rounded-lg shadow-lg backdrop-blur-sm cursor-pointer transform transition-all duration-300 hover:scale-105"
                 :class="toastClasses(toast.type)">
                 <div class="flex items-start gap-3 p-4">
-                    <!-- Icon -->
                     <div class="flex-shrink-0">
                         <svg v-if="toast.type === 'success'" class="h-6 w-6" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
@@ -23,12 +22,10 @@
                         </svg>
                     </div>
 
-                    <!-- Message -->
                     <div class="flex-1 pt-0.5">
                         <p class="text-sm font-medium leading-relaxed">{{ toast.message }}</p>
                     </div>
 
-                    <!-- Close button -->
                     <button @click.stop="removeToast(toast.id)"
                         class="flex-shrink-0 opacity-70 hover:opacity-100 transition-opacity">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,7 +35,6 @@
                     </button>
                 </div>
 
-                <!-- Progress bar -->
                 <div class="h-1 bg-black bg-opacity-10 overflow-hidden">
                     <div class="h-full bg-white bg-opacity-30 animate-progress"
                         :style="{ animationDuration: `${toast.duration}ms` }"></div>
@@ -70,7 +66,6 @@ const toastClasses = (type) => {
 </script>
 
 <style scoped>
-/* Toast animations */
 .toast-enter-active,
 .toast-leave-active {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -90,7 +85,6 @@ const toastClasses = (type) => {
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Progress bar animation */
 @keyframes progress {
     from {
         width: 100%;

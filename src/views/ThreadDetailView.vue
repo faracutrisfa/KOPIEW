@@ -20,7 +20,7 @@
                             class="h-12 w-12 rounded-full object-cover" />
                         <div>
                             <p class="font-semibold text-text-strong">{{ thread.user?.name || thread.userName || 'User'
-                                }}</p>
+                            }}</p>
                             <p class="text-xs text-text-body">{{ thread.created_at || thread.timestamp }}</p>
                         </div>
                     </div>
@@ -41,7 +41,7 @@
                     <div v-if="thread.cafeName || thread.cafe?.name" class="mb-4 rounded-lg bg-gray-50 p-3">
                         <p class="text-sm text-text-body">
                             📍 <span class="font-medium text-text-strong">{{ thread.cafeName || thread.cafe?.name
-                                }}</span>
+                            }}</span>
                         </p>
                     </div>
 
@@ -91,8 +91,9 @@
                 <!-- Comments List -->
                 <div v-if="comments.length > 0" class="space-y-3">
                     <CommentCard v-for="comment in comments" :key="comment.id" :commentId="comment.id"
-                        :userName="comment.userName" :userAvatar="comment.userAvatar" :text="comment.text"
-                        :timestamp="comment.timestamp" :isOwnComment="comment.userId === currentUserId"
+                        :userName="comment.user?.name || 'Unknown User'"
+                        :userAvatar="comment.user?.avatar || '/logo.webp'" :text="comment.comment"
+                        :timestamp="comment.created_at" :isOwnComment="comment.user_id === currentUserId"
                         @delete="handleDeleteComment" />
                 </div>
 

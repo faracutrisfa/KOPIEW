@@ -5,7 +5,7 @@
                 @click.self="closeModal">
                 <div class="w-full max-w-2xl rounded-xl bg-white shadow-2xl" @click.stop>
                     <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
-                        <h2 class="text-2xl font-bold text-text-strong">Buat Thread Baru</h2>
+                        <h2 class="text-2xl font-bold text-text-strong">{{ isEditing ? 'Edit Thread' : 'Buat Thread Baru' }}</h2>
                         <button @click="closeModal" class="text-gray-400 transition-colors hover:text-gray-600"
                             aria-label="Close">
                             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -78,7 +78,7 @@
                             Batal
                         </BaseButton>
                         <BaseButton @click="handleSubmit" variant="primary" :disabled="isSubmitting">
-                            {{ isSubmitting ? 'Memposting...' : 'Posting' }}
+                            {{ isSubmitting ? 'Menyimpan...' : (isEditing ? 'Simpan Perubahan' : 'Posting') }}
                         </BaseButton>
                     </div>
                 </div>
@@ -88,13 +88,17 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import BaseButton from "./BaseButton.vue";
 
 const props = defineProps({
     modelValue: {
         type: Boolean,
         required: true,
+    },
+    initialData: {
+        type: Object,
+        default: null,
     },
 });
 
@@ -106,6 +110,8 @@ const imageFile = ref(null);
 const selectedCafe = ref("");
 const isSubmitting = ref(false);
 const errors = ref({});
+
+const isEditing = computed(() => !!props.initialData);
 
 const cafes = ref([
     { id: 1, name: "Kopi Kenangan" },
@@ -155,13 +161,14 @@ const handleSubmit = () => {
 
     const threadData = {
         content: description.value,
-        image: imageFile.value,
         cafe_id: selectedCafe.value?.id || null,
     };
 
+    if (imageFile.value) {
+        threadData.image = imageFile.value;
+    }
+
     emit('submit', threadData);
-    resetForm();
-    closeModal();
     isSubmitting.value = false;
 };
 
@@ -178,8 +185,30 @@ const closeModal = () => {
     resetForm();
 };
 
-watch(() => props.modelValue, (newVal) => {
-    if (!newVal) {
+const getImageUrl = (imagePath) => {
+    if (!imagePath) return null;
+    if (imagePath.startsWith('http')) return imagePath;
+    return `http://localhost:8000/storage/${imagePath}`;
+};
+
+watch(() => props.modelValue, (isOpen) => {
+    if (isOpen) {
+        if (props.initialData) {
+            description.value = props.initialData.content || "";
+            selectedCafe.value = props.initialData.cafe || "";
+            if (props.initialData.cafe_id) {
+                selectedCafe.value = cafes.value.find(c => c.id === props.initialData.cafe_id) || "";
+            } else if (props.initialData.cafe) {
+                selectedCafe.value = props.initialData.cafe;
+            }
+
+            if (props.initialData.image) {
+                imagePreview.value = getImageUrl(props.initialData.image);
+            }
+        } else {
+            resetForm();
+        }
+    } else {
         resetForm();
     }
 });

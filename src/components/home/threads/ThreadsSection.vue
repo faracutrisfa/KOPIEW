@@ -15,12 +15,10 @@
             </div>
 
             <div ref="contentRef" :class="['scroll-animate-fade', { 'is-visible': isContentVisible }]">
-                <!-- Loading State -->
                 <div v-if="loading" class="flex justify-center py-8">
                     <div class="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
                 </div>
 
-                <!-- Empty State -->
                 <div v-else-if="!threads || threads.length === 0"
                     class="flex flex-col items-center justify-center py-12 text-center">
                     <div class="mb-4 text-6xl opacity-30">📝</div>
@@ -28,19 +26,16 @@
                     <p class="text-sm text-text-body">Jadilah yang pertama untuk berbagi cerita!</p>
                 </div>
 
-                <!-- Threads List -->
-                <div v-else class="overflow-x-auto pb-4">
+                <div v-else class="overflow-x-auto py-10">
                     <div class="flex gap-4" style="min-width: min-content">
-                        <ThreadCard v-for="thread in threads" :key="thread.id"
-                            :profileImage="thread.user?.avatar || thread.userAvatar || thread.profileImage || '/logo.webp'"
-                            :profileName="thread.user?.name || thread.userName || thread.profileName || 'User'"
-                            :timestamp="thread.created_at || thread.timestamp" :image="thread.image"
-                            :name="thread.cafe?.name || thread.cafeName || thread.name || 'Thread'"
-                            :favorite="thread.is_liked || thread.favorite || false"
-                            :bookmarked="thread.bookmarked || false" />
+                        <div v-for="thread in threads" :key="thread.id" class="w-[300px] shrink-0">
+                            <ThreadCard :thread="thread" @delete="handleDeleteThread" @edit="handleEditThread" />
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <CreateThreadModal v-model="showEditModal" :initialData="threadToEdit" @submit="handleSubmitEdit" />
         </div>
     </section>
 </template>
@@ -48,10 +43,16 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import ThreadCard from "../../ThreadCard.vue";
+import CreateThreadModal from "../../CreateThreadModal.vue";
 import { useScrollAnimation } from "../../../composables/useScrollAnimation";
 import { useThreads } from "../../../composables/useThreads";
+import { useToast } from "../../../composables/useToast";
 
-const { threads, loading, error, fetchThreads } = useThreads();
+const { threads, loading, error, fetchThreads, editThread } = useThreads();
+const { showSuccess, showError } = useToast();
+
+const showEditModal = ref(false);
+const threadToEdit = ref(null);
 
 const { elementRef: headerRef, isVisible: isHeaderVisible } = useScrollAnimation({ threshold: 0.2 });
 const { elementRef: contentRef, isVisible: isContentVisible } = useScrollAnimation({ threshold: 0.1 });
@@ -63,4 +64,30 @@ onMounted(async () => {
         console.error("Failed to load threads:", err);
     }
 });
+
+const handleEditThread = (thread) => {
+    threadToEdit.value = thread;
+    showEditModal.value = true;
+};
+
+const handleDeleteThread = (threadId) => {
+    const index = threads.value.findIndex((t) => t.id === threadId);
+    if (index !== -1) {
+        threads.value.splice(index, 1);
+    }
+};
+
+const handleSubmitEdit = async (threadData) => {
+    try {
+        if (threadToEdit.value) {
+            await editThread(threadToEdit.value.id, threadData);
+            showSuccess("Thread berhasil diperbarui! 🎉");
+            showEditModal.value = false;
+            threadToEdit.value = null;
+        }
+    } catch (err) {
+        console.error("Failed to update thread:", err);
+        showError("Gagal memperbarui thread");
+    }
+};
 </script>
