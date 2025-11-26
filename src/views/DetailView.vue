@@ -180,15 +180,15 @@ const deleteReview = async (id) => {
             <SkeletonLoad />
         </div>
 
-        <div v-if="placeData" class="flex gap-6 h-full">
-            <div class="sticky top-3 self-start flex flex-col gap-4">
+        <div v-if="placeData" class="flex flex-col lg:flex-row gap-6 h-full">
+            <div class="lg:sticky lg:max-w-[45vw] top-3 self-start w-full flex flex-1 flex-col gap-4">
                 <div class="flex flex-col">
                     <ImagePreview :thumbs="thumbs" />
                 </div>
     
                 <div class="flex w-full gap-10 bg-primary/80 px-4 py-5 rounded-lg text-white items-center">             
                     <div class="flex gap-2">
-                        <h1 class="font-bold text-6xl">
+                        <h1 class="font-bold text-5xl lg:text-6xl">
                             {{
                                 placeRating?.total_reviewer > 0 &&
                                 placeRating?.total_bintang != null
