@@ -30,3 +30,19 @@ export async function updateProfile(data) {
 
   return response.data.data || response.data;
 }
+
+export async function uploadProfilePhoto(file) {
+  const authStore = useAuthStore();
+  const formData = new FormData();
+  formData.append("photo", file);
+  formData.append("_method", "PATCH");
+
+  const response = await axios.post(`${API_BASE}/profile/photo`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: `Bearer ${authStore.token}`,
+    },
+  });
+
+  return response.data.data;
+}
